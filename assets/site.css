@@ -190,6 +190,14 @@ h1, h2, h3, h4 { color: var(--white); line-height: 1.25; }
 
 .nav-logo:hover img { transform: scale(1.04); }
 
+/* Desktop gets a larger word-logo, and a taller bar to carry it. Phones keep
+   the compact one — the mobile nav is already tight on width. */
+@media (min-width: 781px) {
+  :root { --nav-h: 74px; }
+
+  .nav-logo img { height: 38px; }
+}
+
 .nav-links {
   display: flex;
   align-items: center;
