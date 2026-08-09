@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://atbappsdev-al.github.io/OffBook/sitemap.xml

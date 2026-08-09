@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OffBook – Privacy Policy</title>
+  <meta name="description" content="OffBook's privacy policy. No account, no ads, no tracking — your productions, scripts and rehearsal history live on your device.">
+  <meta name="theme-color" content="#0f0f13">
+  <link rel="canonical" href="https://atbappsdev-al.github.io/OffBook/privacy.html">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/offbook-icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OffBook – Privacy Policy">
+  <meta property="og:description" content="Your data is yours. No account, no advertising, no tracking.">
+  <meta property="og:image" content="https://atbappsdev-al.github.io/OffBook/assets/offbook-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="nav">
+    <div class="wrap">
+      <a class="nav-logo" href="index.html" aria-label="OffBook home">
+        <img src="assets/offbook-logo.png" width="798" height="295" alt="OffBook">
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu">
+        <span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="features.html">Features</a></li>
+        <li><a href="pro.html">Pro</a></li>
+        <li><a href="support.html">Support</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a class="nav-cta" href="download.html">Get the app</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-head">
+    <div class="wrap-narrow">
+      <h1>Privacy Policy</h1>
+      <span class="last-updated">Last updated: August 2026</span>
+    </div>
+  </header>
+
+  <main id="main" class="doc">
+    <div class="wrap-narrow">
+
+      <div class="intro">
+        OffBook is built with a simple principle: your data is yours. We don't ask you to create an account, and we don't use any advertising or tracking. Your productions, scripts, and rehearsal history live on your device. The only time your content leaves your device is when you choose to use an optional AI feature — importing or scanning a script — which sends that content to Google for processing, as explained below. The app also sends anonymous, aggregated usage statistics that cannot be linked to you or your device, so we can see which features are worth building on (see Analytics below).
+      </div>
+
+      <nav class="toc" aria-label="Sections">
+        <div class="toc-title">Contents</div>
+        <ol>
+          <li><a href="#collect">Information We Collect</a></li>
+          <li><a href="#camera">Camera Permission</a></li>
+          <li><a href="#microphone">Microphone Permission</a></li>
+          <li><a href="#ai">AI-Powered Script Import &amp; Scanning</a></li>
+          <li><a href="#internet">Internet Access</a></li>
+          <li><a href="#analytics">Analytics</a></li>
+          <li><a href="#storage">Data Storage</a></li>
+          <li><a href="#third-party">Third-Party Services</a></li>
+          <li><a href="#children">Children's Privacy</a></li>
+          <li><a href="#changes">Changes to This Policy</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ol>
+      </nav>
+
+      <section id="collect">
+        <h2>1. Information We Collect</h2>
+        <p>OffBook does not collect any personal information. The app does not require you to create an account, sign in, or provide any personal details.</p>
+        <p>All data you create within the app — including productions, scripts, characters, rehearsal sessions, and confidence scores — is stored locally on your device. The one exception is the optional AI-powered script import and camera scanning features: when you use them, the specific script content you choose to import or scan is sent to Google for processing. This is described in Section 4.</p>
+      </section>
+
+      <section id="camera">
+        <h2>2. Camera Permission</h2>
+        <p>OffBook requests access to your device's camera solely to allow you to import scripts by photographing a physical document. This is an optional feature.</p>
+        <div class="highlight-box">
+          <p>When your device is online, the captured page images are sent to Google's Gemini AI service to extract and format the text — this produces the most accurate result and is described in more detail in Section 4. If you are offline, or if the AI service is unavailable, OffBook instead extracts the text on your device using on-device text recognition (Google ML Kit on Android, Apple Vision on iOS), with no upload.</p>
+          <p>In either case, captured images are used only to extract the text. OffBook does not save them to your photo library and does not retain them after the text has been extracted.</p>
+        </div>
+      </section>
+
+      <section id="microphone">
+        <h2>3. Microphone Permission</h2>
+        <p>OffBook requests access to your device's microphone solely to enable the line rehearsal feature, which allows you to speak your lines aloud and have them checked against your script. This is an optional feature. How this is processed depends on your device's platform:</p>
+        <div class="highlight-box">
+          <p><strong>Android:</strong> Speech recognition is processed via Google's speech recognition service, which means audio is transmitted to Google's servers for the purpose of converting your speech to text. This is handled by Android's standard speech recognition API and is subject to Google's own privacy policy.</p>
+        </div>
+        <div class="highlight-box">
+          <p><strong>iOS:</strong> Speech recognition is handled by Apple's Speech framework. When your device is online, it uses Apple's speech recognition service, which means audio is transmitted to Apple's servers to convert your speech to text. When you are offline, it falls back to on-device recognition where your device supports it, with no audio transmitted. Either way, this is subject to Apple's own privacy policy.</p>
+        </div>
+        <p>On both platforms, OffBook does not receive, store, or retain any audio recordings or transcriptions beyond what is needed to check your spoken line in the moment.</p>
+      </section>
+
+      <section id="ai">
+        <h2>4. AI-Powered Script Import &amp; Scanning</h2>
+        <p>OffBook offers optional AI features that turn a printed or digital script into rehearsable text more accurately than plain text extraction alone. These features are only used when you actively choose to import a file or scan pages, and they require an internet connection.</p>
+        <div class="highlight-box">
+          <p>When you use these features, the script content you provide is sent to <strong>Google's Gemini AI service</strong> to be read and reformatted. Specifically:</p>
+          <ul style="margin-top: 0.6rem;">
+            <li>Camera scanning — the page images you capture</li>
+            <li>Importing a PDF — the PDF file itself</li>
+            <li>Importing a Word (DOCX) document — the text extracted from that file</li>
+          </ul>
+          <p style="margin-top: 0.6rem;">This data is transmitted to Google solely to convert it into OffBook's script format, and its use by Google is subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's privacy policy</a>. OffBook does not keep a copy of this content on any server — the formatted text is returned to your device and stored there.</p>
+        </div>
+        <p>You should also be aware that this content is processed under Google's terms, which permit Google to retain it and use it to improve their services, including review by humans. OffBook itself never stores your imports on any server — once the text has been extracted, everything lives only on your device.</p>
+        <p>If you are offline, or if the AI service cannot be reached, OffBook falls back to extracting the text entirely on your device (using on-device text recognition for camera scans, or built-in file parsing for documents), in which case nothing is sent to Google.</p>
+        <p>If you would prefer that your script never leaves your device, you can import it as plain text or enter it manually instead, with no network use at all. We recommend not using camera or document import for confidential or unpublished material you are not comfortable sharing with Google.</p>
+      </section>
+
+      <section id="internet">
+        <h2>5. Internet Access</h2>
+        <p>OffBook requires internet access for the following limited purposes only:</p>
+        <ul>
+          <li>Processing script imports — camera photos, PDF and Word documents — which are sent to Google's Gemini AI service to extract your lines (see Section 4)</li>
+          <li>Processing speech recognition via Google's speech recognition service when using the line rehearsal feature on Android devices (on iOS, this is handled by Apple's Speech framework — see Section 3)</li>
+          <li>Processing the optional one-off Pro unlock purchase via Google Play's billing system (Android) or the App Store's billing system (iOS)</li>
+          <li>Receiving app updates delivered through the Google Play Store or Apple App Store</li>
+          <li>Sending anonymous, aggregated usage statistics (see Analytics below)</li>
+        </ul>
+        <p>Apart from the AI features you actively invoke and the purposes listed above, internet access is not used to transmit any personal data, script content, or rehearsal data. The only usage information sent is the anonymous, aggregated statistics described in Section 6 (Analytics).</p>
+      </section>
+
+      <section id="analytics">
+        <h2>6. Analytics</h2>
+        <p>OffBook uses Aptabase, a privacy-first analytics service, to collect anonymous usage statistics — such as which features are used, which rehearsal modes are popular, and whether imports succeed. This helps us understand what to improve.</p>
+        <p>This data is fully anonymised. It contains no personal information, no device identifiers, no advertising IDs, and cannot be linked to you or your device. Alongside each recorded action it includes your platform, operating system version, device model, app version and language: coarse technical details that describe the kind of device the app is running on, not your particular device, and that cannot be used to identify or recognise you. No script content, character names, production details, or anything you type into the app is ever included. Because the data is anonymous, it cannot be traced back to any individual — which also means there is no personal analytics data to request or delete.</p>
+        <p>Aptabase's privacy policy is available at <a href="https://aptabase.com" target="_blank" rel="noopener">aptabase.com</a>.</p>
+      </section>
+
+      <section id="storage">
+        <h2>7. Data Storage</h2>
+        <p>All app data is stored locally on your device using your device's standard local storage. This includes:</p>
+        <ul>
+          <li>Script and production data you enter or import</li>
+          <li>Rehearsal session history and confidence scores</li>
+          <li>App settings and preferences</li>
+        </ul>
+        <p>This data is only accessible by the OffBook app and is never transmitted off your device, with one exception: script images and documents are sent for text extraction at the moment you import them, as described in Section 4. The resulting scripts, your rehearsal history, and confidence scores are stored only on your device.</p>
+      </section>
+
+      <section id="third-party">
+        <h2>8. Third-Party Services</h2>
+        <p><strong>Google Gemini AI.</strong> The optional script import and camera scanning features send your script content to Google's Gemini AI service for processing, as described in Section 4. This is subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's privacy policy</a>.</p>
+        <p><strong>Billing.</strong> OffBook uses Google Play's billing system (Android) or the App Store's billing system (iOS) to process the optional one-off Pro unlock purchase. These transactions are handled entirely by Google or Apple respectively and are subject to their own privacy policies. On neither platform does OffBook receive or store any payment information.</p>
+        <p><strong>Speech recognition.</strong> On Android, speech recognition is processed via Google's speech recognition service; on iOS it is handled by Apple's Speech framework, as described in Section 3.</p>
+        <p><strong>Aptabase.</strong> OffBook sends anonymous, aggregated usage statistics to Aptabase, a privacy-first analytics service, as described in Section 6.</p>
+        <p>No advertising or tracking services are used, and no data is ever sold or shared for marketing purposes.</p>
+      </section>
+
+      <section id="children">
+        <h2>9. Children's Privacy</h2>
+        <p>OffBook does not collect any personal information from anyone, including children. Usage statistics are fully anonymous and cannot identify any individual. Script imports are processed as described in Section 4 regardless of the user's age; younger users, or their parents, may prefer the manual or plain text import options, which keep everything on the device.</p>
+      </section>
+
+      <section id="changes">
+        <h2>10. Changes to This Policy</h2>
+        <p>If this privacy policy is updated, the new version will be posted at this URL. Continued use of the app following any changes constitutes acceptance of the updated policy.</p>
+      </section>
+
+      <section id="contact">
+        <h2>11. Contact</h2>
+        <p>If you have any questions about this privacy policy, please contact:</p>
+        <div class="contact-box">
+          <p class="name">Alex Brent</p>
+          <p class="role">Developer, OffBook</p>
+          <p><a href="mailto:atbappsdev@gmail.com">atbappsdev@gmail.com</a></p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="assets/offbook-logo.png" width="798" height="295" alt="OffBook">
+          <p>The rehearsal companion for actors. Built by a performer, for performers.</p>
+        </div>
+        <div class="footer-col">
+          <h4>App</h4>
+          <ul>
+            <li><a href="features.html">Features</a></li>
+            <li><a href="pro.html">OffBook Pro</a></li>
+            <li><a href="download.html">Download</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Help</h4>
+          <ul>
+            <li><a href="support.html">Support</a></li>
+            <li><a href="support.html#faq">FAQ</a></li>
+            <li><a href="mailto:atbappsdev@gmail.com">Email us</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy.html">Privacy policy</a></li>
+            <li><a href="https://facebook.com/offbuk" target="_blank" rel="noopener">Facebook</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-base">
+        <p>Copyright © 2025–<span data-year>2026</span> Alex Brent. All rights reserved.</p>
+        <p>OffBook — Built by a performer, for performers.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/site.js" defer></script>
+</body>
+</html>

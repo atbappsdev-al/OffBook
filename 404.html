@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OffBook – Page not found</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0f0f13">
+
+  <!-- GitHub Pages serves this file for any missing path, at any depth, so
+       resolve every relative link below against the site root instead of the
+       URL that happened to 404. On a project site that root is /<repo>/. -->
+  <script>
+    (function () {
+      var seg = window.location.pathname.split('/')[1] || '';
+      var base = /\./.test(seg) || seg === '' ? '/' : '/' + seg + '/';
+      document.write('<base href="' + base + '">');
+    })();
+  </script>
+
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="wrap">
+      <a class="nav-logo" href="index.html" aria-label="OffBook home">
+        <img src="assets/offbook-logo.png" width="798" height="295" alt="OffBook">
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu">
+        <span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="features.html">Features</a></li>
+        <li><a href="pro.html">Pro</a></li>
+        <li><a href="support.html">Support</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a class="nav-cta" href="download.html">Get the app</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="notfound">
+    <div>
+      <div class="code">404</div>
+      <h1 style="font-size: clamp(1.4rem, 4vw, 1.9rem); font-weight: 600; margin-bottom: 0.7rem;">
+        You've gone up on your line
+      </h1>
+      <p style="color: var(--muted); max-width: 420px; margin: 0 auto 1.8rem;">
+        This page isn't in the script. Take the prompt and head back to the start.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="index.html">Back to the top of the scene</a>
+        <a class="btn btn-ghost" href="support.html">Get help</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-base" style="border-top: none; padding-top: 0;">
+        <p>Copyright © 2025–<span data-year>2026</span> Alex Brent. All rights reserved.</p>
+        <p>OffBook — Built by a performer, for performers.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/site.js" defer></script>
+</body>
+</html>

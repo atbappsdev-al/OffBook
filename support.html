@@ -1,311 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OffBook – Support</title>
+  <meta name="description" content="Get help with OffBook, report a problem, or suggest a feature. Answers to the most common questions about imports, Pro, offline use and refunds.">
+  <meta name="theme-color" content="#0f0f13">
+  <link rel="canonical" href="https://atbappsdev-al.github.io/OffBook/support.html">
   <link rel="icon" type="image/png" href="assets/favicon.png">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  <link rel="apple-touch-icon" href="assets/offbook-icon.png">
 
-    :root {
-      --bg: #0f0f13;
-      --surface: #1a1a24;
-      --border: #2a2a38;
-      --purple: #9b6dff;
-      --purple-dim: #6b4dcc;
-      --text: #e8e8f0;
-      --muted: #8888a8;
-      --white: #ffffff;
-    }
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OffBook – Support">
+  <meta property="og:description" content="Get help, report a problem, or just say hello.">
+  <meta property="og:image" content="https://atbappsdev-al.github.io/OffBook/assets/offbook-icon.png">
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      line-height: 1.7;
-      min-height: 100vh;
-    }
-
-    header {
-      border-bottom: 1px solid var(--border);
-      padding: 2rem 0;
-      text-align: center;
-      background: linear-gradient(180deg, #1a1030 0%, var(--bg) 100%);
-    }
-
-    /* Official OffBook word-logo (dark-theme variant, from the app) */
-    .logo {
-      display: block;
-      width: 200px;
-      max-width: 68%;
-      height: auto;
-      margin: 0 auto;
-    }
-
-    .tagline {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-top: 0.3rem;
-      font-weight: 300;
-    }
-
-    main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 3rem 1.5rem 5rem;
-    }
-
-    .page-title {
-      font-size: 1.9rem;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 0.4rem;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin-bottom: 2.5rem;
-      display: block;
-    }
-
-    .intro {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--purple);
-      border-radius: 8px;
-      padding: 1.2rem 1.4rem;
-      margin-bottom: 2.5rem;
-      color: var(--text);
-      font-size: 0.95rem;
-    }
-
-    section {
-      margin-bottom: 2.2rem;
-    }
-
-    h2 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--purple);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-family: 'DM Mono', monospace;
-      margin-bottom: 0.8rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    p {
-      color: var(--text);
-      margin-bottom: 0.8rem;
-      font-size: 0.95rem;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-bottom: 0.8rem;
-    }
-
-    ul li {
-      padding: 0.3rem 0 0.3rem 1.2rem;
-      position: relative;
-      font-size: 0.95rem;
-      color: var(--text);
-    }
-
-    ul li::before {
-      content: '—';
-      position: absolute;
-      left: 0;
-      color: var(--purple-dim);
-    }
-
-    .highlight-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem 1.2rem;
-      margin: 1rem 0;
-    }
-
-    .highlight-box p {
-      margin: 0;
-    }
-
-    .contact-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--purple);
-      border-radius: 8px;
-      padding: 1.4rem 1.6rem;
-      margin: 1rem 0 1.5rem;
-    }
-
-    .contact-box p {
-      margin: 0;
-    }
-
-    .contact-box .name {
-      font-weight: 600;
-      color: var(--white);
-      font-size: 1.05rem;
-    }
-
-    .contact-box .role {
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-bottom: 0.6rem;
-    }
-
-    .contact-box a {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.95rem;
-    }
-
-    details {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem 1.2rem;
-      margin-bottom: 0.8rem;
-    }
-
-    summary {
-      cursor: pointer;
-      font-weight: 500;
-      color: var(--white);
-      font-size: 0.98rem;
-      list-style: none;
-    }
-
-    summary::-webkit-details-marker {
-      display: none;
-    }
-
-    summary::before {
-      content: '+ ';
-      color: var(--purple);
-      font-family: 'DM Mono', monospace;
-    }
-
-    details[open] summary::before {
-      content: '– ';
-    }
-
-    details p {
-      margin-top: 0.8rem;
-      margin-bottom: 0;
-      color: var(--muted);
-    }
-
-    a {
-      color: var(--purple);
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.82rem;
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
 
-  <header>
-    <img class="logo" src="assets/offbook-logo.png" width="798" height="295" alt="OffBook">
-    <p class="tagline">Learn your lines. Track your confidence.</p>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="nav">
+    <div class="wrap">
+      <a class="nav-logo" href="index.html" aria-label="OffBook home">
+        <img src="assets/offbook-logo.png" width="798" height="295" alt="OffBook">
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu">
+        <span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="features.html">Features</a></li>
+        <li><a href="pro.html">Pro</a></li>
+        <li><a href="support.html">Support</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a class="nav-cta" href="download.html">Get the app</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-head">
+    <div class="wrap-narrow">
+      <h1>Support</h1>
+      <p>Get help, report a problem, or just say hello.</p>
+    </div>
   </header>
 
-  <main>
-    <h1 class="page-title">Support</h1>
-    <span class="subtitle">Get help, report a problem, or just say hello.</span>
+  <main id="main" class="doc">
+    <div class="wrap-narrow">
 
-    <div class="intro">
-      OffBook is built and supported by one person, working on it around a day job and the odd am-dram rehearsal. If something's not working right, or you've got an idea for a feature, I'd genuinely like to hear about it — get in touch below.
-    </div>
-
-    <section>
-      <h2>Contact</h2>
-      <div class="contact-box">
-        <p class="name">Alex Brent</p>
-        <p class="role">Developer, OffBook</p>
-        <p>Email: <a href="mailto:atbappsdev@gmail.com">atbappsdev@gmail.com</a></p>
+      <div class="intro">
+        OffBook is built and supported by one person, working on it around a day job and the odd am-dram rehearsal. If something's not working right, or you've got an idea for a feature, I'd genuinely like to hear about it — get in touch below.
       </div>
-      <p>I aim to reply within a few days. If you're reporting a bug, it helps enormously if you can include your device model, iOS/Android version, and what you were doing when it happened.</p>
-    </section>
 
-    <section>
-      <h2>Frequently Asked Questions</h2>
+      <section>
+        <h2>Contact</h2>
+        <div class="contact-box">
+          <p class="name">Alex Brent</p>
+          <p class="role">Developer, OffBook</p>
+          <p>Email: <a href="mailto:atbappsdev@gmail.com">atbappsdev@gmail.com</a></p>
+        </div>
+        <p>I aim to reply within a few days. If you're reporting a bug, it helps enormously if you can include your device model, iOS/Android version, and what you were doing when it happened.</p>
 
-      <details>
-        <summary>How do I import a script?</summary>
-        <p>From the productions screen, tap the add button and choose to import via camera, text file, or by typing it in manually. The camera option scans a physical page and extracts the text automatically.</p>
-      </details>
+        <div class="grid grid-3" style="margin-top: 1.6rem;">
+          <a class="card reveal" href="mailto:atbappsdev@gmail.com?subject=OffBook%20bug%20report" style="color: inherit;">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            <h3>Report a bug</h3>
+            <p>Something broken or behaving oddly? Tell me what happened.</p>
+          </a>
+          <a class="card reveal d1" href="mailto:atbappsdev@gmail.com?subject=OffBook%20feature%20idea" style="color: inherit;">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.1 14a5 5 0 1 0-6.2 0c.6.5 1.1 1.2 1.1 2h4c0-.8.5-1.5 1.1-2z"/></svg>
+            <h3>Suggest a feature</h3>
+            <p>The feature list is shaped by performers actually using it.</p>
+          </a>
+          <a class="card reveal d2" href="mailto:atbappsdev@gmail.com?subject=OffBook%20Pro%20purchase" style="color: inherit;">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <h3>Purchase problem</h3>
+            <p>Pro not unlocking? Send your receipt and I'll sort it out.</p>
+          </a>
+        </div>
+      </section>
 
-      <details>
-        <summary>What does OffBook Pro unlock?</summary>
-        <p>OffBook Pro is a one-off purchase (no subscription) that unlocks confidence scoring and statistics, unlimited productions, camera script scanning, and the ability to import shared .offbook files. Everyone gets a free trial of these features to try before buying.</p>
-      </details>
+      <section id="faq">
+        <h2>Frequently Asked Questions</h2>
 
-      <details>
-        <summary>Does OffBook work without an internet connection?</summary>
-        <p>Yes, for the most part. Script storage, rehearsal, and line-hiding all work fully offline. A few features use the internet: AI script import and camera scanning send your script to Google's Gemini service for the most accurate results (with an on-device fallback when you're offline), and on Android voice recognition uses Google's speech recognition service. On iOS, voice recognition uses Apple's Speech framework — Apple's online service when you're connected, falling back to on-device recognition when you're offline (where your device supports it).</p>
-      </details>
+        <details>
+          <summary>How do I import a script?</summary>
+          <p>From the productions screen, tap the add button and choose to import via camera, text file, or by typing it in manually. The camera option scans a physical page and extracts the text automatically.</p>
+        </details>
 
-      <details>
-        <summary>I bought Pro but it's not unlocking. What do I do?</summary>
-        <p>First, try closing and reopening the app. If that doesn't help, check that you're signed in with the same Apple ID or Google account you used to purchase. Still stuck? Email me at the address above with your order/receipt details and I'll sort it out.</p>
-      </details>
+        <details>
+          <summary>What does OffBook Pro unlock?</summary>
+          <p>OffBook Pro is a one-off purchase (no subscription) that unlocks confidence scoring and statistics, unlimited productions, camera script scanning, and the ability to import shared .offbook files. Everyone gets a free trial of these features to try before buying. <a href="pro.html">More about Pro →</a></p>
+        </details>
 
-      <details>
-        <summary>Can I use OffBook on more than one device?</summary>
-        <p>Your Pro purchase is tied to your Apple ID or Google account, so it should carry across any device you're signed into with that same account. Your script and rehearsal data, however, is stored locally on each device and doesn't currently sync between them.</p>
-      </details>
+        <details>
+          <summary>Does OffBook work without an internet connection?</summary>
+          <p>Yes, for the most part. Script storage, rehearsal, and line-hiding all work fully offline. A few features use the internet: AI script import and camera scanning send your script to Google's Gemini service for the most accurate results (with an on-device fallback when you're offline), and on Android voice recognition uses Google's speech recognition service. On iOS, voice recognition uses Apple's Speech framework — Apple's online service when you're connected, falling back to on-device recognition when you're offline (where your device supports it).</p>
+        </details>
 
-      <details>
-        <summary>How do I request a refund?</summary>
-        <p>Refunds are handled directly by Apple or Google, not by OffBook. For iOS purchases, visit <a href="https://reportaproblem.apple.com" target="_blank" rel="noopener">reportaproblem.apple.com</a>. For Android, refunds can be requested through the Google Play Store's order history.</p>
-      </details>
+        <details>
+          <summary>I bought Pro but it's not unlocking. What do I do?</summary>
+          <p>First, try closing and reopening the app. If that doesn't help, check that you're signed in with the same Apple ID or Google account you used to purchase. Still stuck? Email me at the address above with your order/receipt details and I'll sort it out.</p>
+        </details>
 
-      <details>
-        <summary>I've found a bug. How do I report it?</summary>
-        <p>Please email the address above with as much detail as you can — what you were doing, what you expected to happen, and what happened instead. Screenshots or screen recordings help a lot too.</p>
-      </details>
+        <details>
+          <summary>Can I use OffBook on more than one device?</summary>
+          <p>Your Pro purchase is tied to your Apple ID or Google account, so it should carry across any device you're signed into with that same account. Your script and rehearsal data, however, is stored locally on each device and doesn't currently sync between them.</p>
+        </details>
 
-      <details>
-        <summary>Can you add [feature]?</summary>
-        <p>Maybe! OffBook's feature list is shaped almost entirely by feedback from performers actually using it. Send your idea over and I'll genuinely consider it.</p>
-      </details>
+        <details>
+          <summary>How do I request a refund?</summary>
+          <p>Refunds are handled directly by Apple or Google, not by OffBook. For iOS purchases, visit <a href="https://reportaproblem.apple.com" target="_blank" rel="noopener">reportaproblem.apple.com</a>. For Android, refunds can be requested through the Google Play Store's order history.</p>
+        </details>
 
-    </section>
+        <details>
+          <summary>I've found a bug. How do I report it?</summary>
+          <p>Please email the address above with as much detail as you can — what you were doing, what you expected to happen, and what happened instead. Screenshots or screen recordings help a lot too.</p>
+        </details>
 
-    <section>
-      <h2>Other Links</h2>
-      <ul>
-        <li><a href="https://facebook.com/offbuk" target="_blank" rel="noopener">Facebook</a> — updates, tips, and the occasional rehearsal meme</li>
-        <li><a href="https://atbappsdev-al.github.io/OffBook" target="_blank" rel="noopener">Privacy Policy</a></li>
-      </ul>
-    </section>
+        <details>
+          <summary>Can you add [feature]?</summary>
+          <p>Maybe! OffBook's feature list is shaped almost entirely by feedback from performers actually using it. Send your idea over and I'll genuinely consider it.</p>
+        </details>
 
+        <details>
+          <summary>Is my script private?</summary>
+          <p>Your scripts, productions and rehearsal history are stored on your device and there's no account behind any of it. The exception is the optional AI import and camera scanning, which send that content to Google to be read, and voice recognition, which is handled by Google or Apple depending on your platform. All of it is set out plainly in the <a href="privacy.html">privacy policy</a>.</p>
+        </details>
+
+      </section>
+
+      <section>
+        <h2>Other Links</h2>
+        <ul>
+          <li><a href="https://facebook.com/offbuk" target="_blank" rel="noopener">Facebook</a> — updates, tips, and the occasional rehearsal meme</li>
+          <li><a href="privacy.html">Privacy Policy</a> — what leaves your device, and when</li>
+          <li><a href="features.html">Features</a> — everything the app does</li>
+          <li><a href="pro.html">OffBook Pro</a> — what the one-off unlock adds</li>
+        </ul>
+      </section>
+
+    </div>
   </main>
 
-  <footer>
-    <p>Copyright © 2025–2026 Alex Brent. All rights reserved.</p>
-    <p style="margin-top: 0.4rem;">OffBook — Built by a performer, for performers.</p>
+  <section class="cta-band">
+    <div class="wrap">
+      <h2 class="reveal">Not got the app yet?</h2>
+      <p class="reveal d1">OffBook is free to download on iOS and Android.</p>
+      <div class="btn-row reveal d2">
+        <a class="btn btn-primary" href="download.html">Download OffBook</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="assets/offbook-logo.png" width="798" height="295" alt="OffBook">
+          <p>The rehearsal companion for actors. Built by a performer, for performers.</p>
+        </div>
+        <div class="footer-col">
+          <h4>App</h4>
+          <ul>
+            <li><a href="features.html">Features</a></li>
+            <li><a href="pro.html">OffBook Pro</a></li>
+            <li><a href="download.html">Download</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Help</h4>
+          <ul>
+            <li><a href="support.html">Support</a></li>
+            <li><a href="support.html#faq">FAQ</a></li>
+            <li><a href="mailto:atbappsdev@gmail.com">Email us</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy.html">Privacy policy</a></li>
+            <li><a href="https://facebook.com/offbuk" target="_blank" rel="noopener">Facebook</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-base">
+        <p>Copyright © 2025–<span data-year>2026</span> Alex Brent. All rights reserved.</p>
+        <p>OffBook — Built by a performer, for performers.</p>
+      </div>
+    </div>
   </footer>
 
+  <script src="assets/site.js" defer></script>
 </body>
 </html>
