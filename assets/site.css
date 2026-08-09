@@ -1036,43 +1036,8 @@ a.card h3 { color: var(--white); }
   transform: none;
 }
 
-.sale-banner {
-  display: none;
-  align-items: center;
-  gap: 0.7rem;
-  background: var(--purple-soft);
-  border: 1px solid var(--purple-line);
-  border-radius: var(--radius-sm);
-  padding: 0.85rem 1.1rem;
-  margin-bottom: 1.4rem;
-  font-size: 0.9rem;
-}
-
-.sale-banner.show { display: flex; }
-
-.sale-banner .tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  background: var(--grad);
-  color: #fff;
-  padding: 0.22rem 0.6rem;
-  border-radius: 999px;
-  flex-shrink: 0;
-}
-
-.sale-banner .countdown {
-  font-family: 'DM Mono', monospace;
-  color: var(--purple);
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
 @media (max-width: 720px) {
   .price-grid { grid-template-columns: 1fr; }
-  .sale-banner { flex-wrap: wrap; }
-  .sale-banner .countdown { margin-left: 0; }
 }
 
 /* --------------------------------------------------------------------------

@@ -263,58 +263,31 @@
 
   /* ------------------------------------------------------------ pricing -- */
 
-  /* Reads the same pricing.json the apps read, so the site's sale badge and
-     the in-app paywall badge can never disagree. Purely decorative: if the
-     fetch fails, the page just shows no banner. */
-  function initPricing() {
-    var banner = document.querySelector('[data-sale-banner]');
-    if (!banner) return;
+  /* Quotes the regular price straight out of pricing.json — the same file the
+     in-app paywall reads — so the site can't drift from the app.
 
-    var url = banner.getAttribute('data-sale-banner') || 'pricing.json';
+     Deliberately does NOT announce a sale. The in-app badge requires the
+     visitor's own storefront price to be strictly below the baseline for their
+     currency, and a web page has no way to know either of those. Showing a
+     banner off `sale_active` alone would claim a discount to people who aren't
+     being offered one. See PRICING.md. */
+  function initPricing() {
+    var priceEl = document.querySelector('[data-baseline-price]');
+    if (!priceEl) return;
+
+    var url = priceEl.getAttribute('data-pricing-src') || 'pricing.json';
 
     fetch(url, { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function (data) {
-        if (!data) return;
+        if (!data || !data.baseline_prices) return;
 
-        // Keep the quoted full price in step with the file the apps read.
-        var priceEl = document.querySelector('[data-baseline-price]');
-        if (priceEl && data.baseline_prices) {
-          var cur = priceEl.getAttribute('data-baseline-price') || 'GBP';
-          var symbols = { GBP: '£', USD: '$', CAD: 'CA$', EUR: '€' };
-          var value = data.baseline_prices[cur];
-          if (value) priceEl.textContent = (symbols[cur] || '') + value;
-        }
-
-        if (data.sale_active !== true) return;
-
-        var ends = data.sale_ends_at ? new Date(data.sale_ends_at) : null;
-        if (ends && !isNaN(ends) && ends.getTime() <= Date.now()) return;
-
-        banner.classList.add('show');
-
-        var out = banner.querySelector('.countdown');
-        if (!out || !ends || isNaN(ends)) return;
-
-        var render = function () {
-          var diff = ends.getTime() - Date.now();
-          if (diff <= 0) { banner.classList.remove('show'); return; }
-
-          var d = Math.floor(diff / 86400000);
-          var h = Math.floor(diff / 3600000) % 24;
-          var m = Math.floor(diff / 60000) % 60;
-          var s = Math.floor(diff / 1000) % 60;
-
-          out.textContent = d > 0
-            ? d + 'd ' + h + 'h ' + m + 'm left'
-            : h + 'h ' + m + 'm ' + s + 's left';
-
-          setTimeout(render, d > 0 ? 60000 : 1000);
-        };
-
-        render();
+        var cur = priceEl.getAttribute('data-baseline-price') || 'GBP';
+        var symbols = { GBP: '\u00a3', USD: '$', CAD: 'CA$', EUR: '\u20ac' };
+        var value = data.baseline_prices[cur];
+        if (value) priceEl.textContent = (symbols[cur] || '') + value;
       })
-      .catch(function () { /* no banner — the store price is the truth anyway */ });
+      .catch(function () { /* leave the figure in the markup — the store is the truth anyway */ });
   }
 
   /* --------------------------------------------------------------- misc -- */

@@ -55,13 +55,13 @@
     <section class="section">
       <div class="wrap" style="max-width: 900px;">
 
-        <!-- Reads pricing.json — the same file the in-app paywall reads, so the
-             badge here can't contradict the badge in the app. -->
-        <div class="sale-banner" data-sale-banner="pricing.json" role="status">
-          <span class="tag">Limited-time offer</span>
-          <span>A reduced price is running on the stores right now.</span>
-          <span class="countdown"></span>
-        </div>
+        <!--
+          No sale banner here on purpose. The in-app badge only appears when the
+          visitor's own storefront price is strictly below the baseline for their
+          currency (see PRICING.md) — a per-user comparison this page cannot make.
+          Announcing an offer off `sale_active` alone would claim a discount for
+          people who aren't being offered one.
+        -->
 
         <div class="price-grid">
           <div class="plan reveal">
@@ -82,7 +82,7 @@
 
           <div class="plan featured reveal d1">
             <div class="tier">Pro · one-off unlock</div>
-            <div class="amount"><span data-baseline-price="GBP">£5.99</span> <small>once</small></div>
+            <div class="amount"><span data-baseline-price="GBP">£4.99</span> <small>once</small></div>
             <p class="terms">Full price. Your store shows the price in your own currency — and any offer running today.</p>
             <ul>
               <li><strong style="color: var(--white); font-weight: 500;">Confidence scoring</strong> on every run</li>

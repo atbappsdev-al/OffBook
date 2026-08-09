@@ -44,7 +44,7 @@ Shared across all of them:
 | File | Purpose |
 | --- | --- |
 | `assets/site.css` | The whole design system — colours, layout, components, animation |
-| `assets/site.js` | Nav, scroll reveals, the phone demo, chart/bar animation, sale banner |
+| `assets/site.js` | Nav, scroll reveals, the phone demo, chart/bar animation, price sync |
 | `assets/offbook-logo.png` | Official word-logo (dark-theme variant, from the app) |
 | `assets/offbook-icon.png` | Official app icon, as shipped on the stores |
 | `assets/favicon.png` | Favicon |
@@ -76,18 +76,23 @@ add `coming-soon` to that badge's `<a>` — it greys out and stops being clickab
 
 ---
 
-## The sale banner on `pro.html`
+## The price on `pro.html`
 
-`pro.html` fetches `pricing.json` — the very same file the in-app paywall reads — so the
-website and the app can't contradict each other:
+`pro.html` fetches `pricing.json` — the very same file the in-app paywall reads — and
+fills the quoted regular price in from `baseline_prices.GBP`, so the site and the app
+can't drift apart. It fails silently: if the fetch doesn't work, the figure written into
+the markup stands.
 
-- the quoted full price is filled in from `baseline_prices.GBP`;
-- the **Limited-time offer** banner appears only while `sale_active` is `true` and
-  `sale_ends_at` is still in the future, counting down to that moment.
+**The site deliberately does not advertise sales.** The in-app badge appears only when
+the user's own storefront price is strictly below the baseline for *their* currency, on
+top of `sale_active` being on — and a web page knows neither the visitor's storefront nor
+their price. A banner driven by `sale_active` alone would promise a discount to everyone,
+including people whose store isn't offering one. If you want a sale announced on the
+site, write it into the page for that sale and take it down afterwards.
 
-It's decorative and fails silently: if the fetch doesn't work, no banner appears and the
-page reads normally. Editing `pricing.json` changes both the app badge and this banner —
-see [PRICING.md](PRICING.md) before you touch it.
+Keeping `baseline_prices` accurate matters here as much as it does in the app: whatever
+is in that file is what this page tells the public your regular price is. See
+[PRICING.md](PRICING.md).
 
 ---
 
