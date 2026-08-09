@@ -56,12 +56,20 @@
       <div class="wrap" style="max-width: 900px;">
 
         <!--
-          No sale banner here on purpose. The in-app badge only appears when the
-          visitor's own storefront price is strictly below the baseline for their
-          currency (see PRICING.md) — a per-user comparison this page cannot make.
-          Announcing an offer off `sale_active` alone would claim a discount for
-          people who aren't being offered one.
+          Shown only while pricing.json has sale_active true and an end date that
+          hasn't passed — the same switch that drives the in-app badge.
+
+          The wording stops at "on offer" and points at the store on purpose. The
+          app can say more because it checks the visitor's own storefront price
+          against their currency's baseline; a web page knows neither, so naming a
+          discount here would promise one to visitors whose store isn't giving it.
         -->
+        <div class="sale-banner" data-sale-banner="pricing.json" role="status">
+          <span class="tag">Limited-time offer</span>
+          <span class="sale-text">OffBook Pro is on offer — normally
+            <span data-baseline-price="GBP">£4.99</span>. Your store shows today's price.</span>
+          <span class="countdown"></span>
+        </div>
 
         <div class="price-grid">
           <div class="plan reveal">

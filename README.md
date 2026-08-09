@@ -44,7 +44,7 @@ Shared across all of them:
 | File | Purpose |
 | --- | --- |
 | `assets/site.css` | The whole design system — colours, layout, components, animation |
-| `assets/site.js` | Nav, scroll reveals, the phone demo, chart/bar animation, price sync |
+| `assets/site.js` | Nav, scroll reveals, the phone demo, chart/bar animation, price + offer banner |
 | `assets/offbook-logo.png` | Official word-logo (dark-theme variant, from the app) |
 | `assets/offbook-icon.png` | Official app icon, as shipped on the stores |
 | `assets/favicon.png` | Favicon |
@@ -76,23 +76,32 @@ add `coming-soon` to that badge's `<a>` — it greys out and stops being clickab
 
 ---
 
-## The price on `pro.html`
+## What `pro.html` takes from `pricing.json`
 
-`pro.html` fetches `pricing.json` — the very same file the in-app paywall reads — and
-fills the quoted regular price in from `baseline_prices.GBP`, so the site and the app
-can't drift apart. It fails silently: if the fetch doesn't work, the figure written into
-the markup stands.
+The Pro page fetches `pricing.json` — the very same file the in-app paywall reads — so
+the site and the app can't drift apart. Two things come from it:
 
-**The site deliberately does not advertise sales.** The in-app badge appears only when
-the user's own storefront price is strictly below the baseline for *their* currency, on
-top of `sale_active` being on — and a web page knows neither the visitor's storefront nor
-their price. A banner driven by `sale_active` alone would promise a discount to everyone,
-including people whose store isn't offering one. If you want a sale announced on the
-site, write it into the page for that sale and take it down afterwards.
+- **The quoted regular price**, from `baseline_prices` (any element with
+  `data-baseline-price="GBP"` gets filled in; swap the currency code as needed).
+- **The Limited-time offer banner**, shown only while `sale_active` is `true` and
+  `sale_ends_at` hasn't passed. Over 48 hours out it prints "Offer ends 14 August 2026"
+  in the reader's own locale; inside 48 hours it counts down live, and it removes itself
+  the moment the deadline passes, with no reload.
 
-Keeping `baseline_prices` accurate matters here as much as it does in the app: whatever
-is in that file is what this page tells the public your regular price is. See
-[PRICING.md](PRICING.md).
+`sale_ends_at` is handled exactly as PRICING.md specifies: absent, `null` or `""` means
+no end date; a value without an explicit UTC offset, or one that isn't a usable instant,
+suppresses the banner rather than being ignored. Same reasoning as the apps — "absent"
+already means *runs forever*, so a typo must close the banner, not open it indefinitely.
+
+**One rule the website can't apply.** The app also requires the user's own storefront
+price to be strictly below their currency's baseline; a web page knows neither the
+visitor's storefront nor their price. So the banner stops at "OffBook Pro is on offer —
+normally £4.99. Your store shows today's price." Naming a discount here would promise one
+to visitors whose storefront isn't giving it. Keep the wording at that altitude if you
+edit it.
+
+Whatever sits in `baseline_prices` is what this page tells the public your regular price
+is, so it needs to be right for reasons beyond the badge — see [PRICING.md](PRICING.md).
 
 ---
 

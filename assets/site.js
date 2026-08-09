@@ -263,31 +263,101 @@
 
   /* ------------------------------------------------------------ pricing -- */
 
-  /* Quotes the regular price straight out of pricing.json — the same file the
-     in-app paywall reads — so the site can't drift from the app.
+  /* Reads pricing.json — the same file the in-app paywall reads — for two
+     things: the quoted regular price, and whether an offer is on.
 
-     Deliberately does NOT announce a sale. The in-app badge requires the
-     visitor's own storefront price to be strictly below the baseline for their
-     currency, and a web page has no way to know either of those. Showing a
-     banner off `sale_active` alone would claim a discount to people who aren't
-     being offered one. See PRICING.md. */
+     The gate below deliberately mirrors PRICING.md, minus the one rule a web
+     page cannot apply: the app also requires the visitor's own storefront price
+     to be strictly below their currency's baseline. We know neither here, which
+     is why the banner says "on offer" and sends people to their store rather
+     than naming a discount they might not be getting. */
   function initPricing() {
-    var priceEl = document.querySelector('[data-baseline-price]');
-    if (!priceEl) return;
+    var priceEls = document.querySelectorAll('[data-baseline-price]');
+    var banner = document.querySelector('[data-sale-banner]');
+    if (!priceEls.length && !banner) return;
 
-    var url = priceEl.getAttribute('data-pricing-src') || 'pricing.json';
+    var url = (banner && banner.getAttribute('data-sale-banner')) ||
+              (priceEls[0] && priceEls[0].getAttribute('data-pricing-src')) ||
+              'pricing.json';
+
+    var symbols = { GBP: '£', USD: '$', CAD: 'CA$', EUR: '€', AUD: 'A$' };
 
     fetch(url, { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function (data) {
-        if (!data || !data.baseline_prices) return;
+        if (!data) return;
 
-        var cur = priceEl.getAttribute('data-baseline-price') || 'GBP';
-        var symbols = { GBP: '\u00a3', USD: '$', CAD: 'CA$', EUR: '\u20ac' };
-        var value = data.baseline_prices[cur];
-        if (value) priceEl.textContent = (symbols[cur] || '') + value;
+        if (data.baseline_prices) {
+          priceEls.forEach(function (el) {
+            var cur = el.getAttribute('data-baseline-price') || 'GBP';
+            var value = data.baseline_prices[cur];
+            if (value) el.textContent = (symbols[cur] || '') + value;
+          });
+        }
+
+        if (!banner || data.sale_active !== true) return;
+
+        var ends = parseSaleEnd(data.sale_ends_at);
+        if (ends === false) return;           // unusable value — show nothing
+        if (ends && ends.getTime() <= Date.now()) return;
+
+        banner.classList.add('show');
+        startCountdown(banner, ends);
       })
-      .catch(function () { /* leave the figure in the markup — the store is the truth anyway */ });
+      .catch(function () { /* no banner; the figure in the markup stands */ });
+  }
+
+  /* PRICING.md's rules for sale_ends_at, kept deliberately faithful:
+       absent / null / ""      -> null  (no end date, runs until switched off)
+       a valid instant WITH an explicit UTC offset -> Date
+       anything else           -> false (suppresses the banner entirely)
+     That last case is the important one: "absent" already means "runs forever",
+     so treating a typo as absent would leave a bad banner up indefinitely. */
+  function parseSaleEnd(raw) {
+    if (raw === undefined || raw === null || raw === '') return null;
+    if (typeof raw !== 'string') return false;
+    if (!/(?:Z|[+-]\d{2}:?\d{2})$/.test(raw)) return false;   // zone-less is rejected
+    var d = new Date(raw);
+    return isNaN(d.getTime()) ? false : d;
+  }
+
+  /* Prints the end date the way the paywall does ("Offer ends 14 August 2026",
+     in the reader's own locale), tightening to a live countdown in the last
+     48 hours and pulling the banner once the moment passes. */
+  function startCountdown(banner, ends) {
+    var out = banner.querySelector('.countdown');
+    if (!out) return;
+
+    if (!ends) { out.textContent = ''; return; }
+
+    var dateText;
+    try {
+      dateText = 'Offer ends ' + ends.toLocaleDateString(undefined, {
+        day: 'numeric', month: 'long', year: 'numeric'
+      });
+    } catch (e) {
+      dateText = 'Offer ends ' + ends.toDateString();
+    }
+
+    var render = function () {
+      var diff = ends.getTime() - Date.now();
+
+      if (diff <= 0) { banner.classList.remove('show'); return; }
+
+      if (diff > 172800000) {                       // more than 48h out
+        out.textContent = dateText;
+        setTimeout(render, 60000);
+        return;
+      }
+
+      var h = Math.floor(diff / 3600000);
+      var m = Math.floor(diff / 60000) % 60;
+      var s = Math.floor(diff / 1000) % 60;
+      out.textContent = 'Ends in ' + h + 'h ' + m + 'm ' + s + 's';
+      setTimeout(render, 1000);
+    };
+
+    render();
   }
 
   /* --------------------------------------------------------------- misc -- */
