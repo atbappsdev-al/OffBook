@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OffBook – Pro</title>
-  <meta name="description" content="OffBook Pro is a one-off unlock — no subscription. It adds confidence scoring and statistics, unlimited productions, camera script scanning and shared script imports.">
+  <meta name="description" content="OffBook Pro is a one-off unlock — no subscription. It adds confidence scoring and statistics, unlimited productions, rehearsal reminders and shared script imports.">
   <meta name="theme-color" content="#0f0f13">
   <link rel="canonical" href="https://atbappsdev-al.github.io/OffBook/pro.html">
   <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -12,7 +12,7 @@
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="OffBook Pro">
-  <meta property="og:description" content="One purchase, no subscription. Confidence scoring, unlimited productions, camera scanning and more.">
+  <meta property="og:description" content="One purchase, no subscription. Confidence scoring, unlimited productions, rehearsal reminders and more.">
   <meta property="og:image" content="https://atbappsdev-al.github.io/OffBook/assets/offbook-icon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,19 +71,43 @@
           <span class="countdown"></span>
         </div>
 
+        <!--
+          Both cards mirror the in-app paywall's own feature list — the Android
+          `bottom_sheet_paywall.xml` rows and the identical `features` array in
+          iOS `PaywallSheet.swift`. Keep them in step: a visitor who reads this
+          page and then opens the paywall should see the same six things.
+
+          Two easy mistakes, both previously on this page:
+
+          • Camera scanning is *free*. Nothing in the scan flow touches a gate on
+            either platform, and there is no `camera` PaywallSource — so it must
+            not be sold as Pro, or listed as missing from Free.
+          • The free tier is *one* production, not "productions" in general. The
+            second one is what raises the paywall.
+
+          Confidence scoring, statistics and share cards gate on
+          `isPro || hasTrialRemaining`, so Free gets ten sessions of them and
+          then loses them. Rehearsal reminders and `.offbook` import gate on
+          `isPro` alone and are never in the trial — hence their separate line in
+          the Free card. Android's home-screen widget is Pro-only too, but it has
+          no iOS counterpart, so it stays off a page that speaks for both.
+        -->
         <div class="price-grid">
           <div class="plan reveal">
             <div class="tier">Free</div>
             <div class="amount">£0</div>
             <p class="terms">Everything you need to start learning a part.</p>
             <ul>
-              <li>Import scripts as plain text or type them in</li>
+              <li>Import by camera, PDF, Word or plain text — or type it in</li>
               <li>Hide your character's lines</li>
               <li>Rehearse out loud with voice recognition</li>
-              <li>Productions, characters and scenes</li>
-              <li>A free trial of the Pro features</li>
-              <li class="off">Confidence scoring and statistics</li>
-              <li class="off">Camera script scanning</li>
+              <li>One production, with its scenes, characters and badges</li>
+              <li>Export an <span style="font-family:'DM Mono',monospace">.offbook</span> file for the rest of your cast</li>
+              <li>Ten rehearsal sessions with confidence scoring, statistics and
+                share cards unlocked</li>
+              <li class="off">A second production</li>
+              <li class="off">Confidence scoring and statistics after those ten sessions</li>
+              <li class="off">Rehearsal reminders and <span style="font-family:'DM Mono',monospace">.offbook</span> import</li>
             </ul>
             <a class="btn btn-ghost" href="download.html">Download free</a>
           </div>
@@ -95,10 +119,10 @@
             <ul>
               <li><strong style="color: var(--white); font-weight: 500;">Confidence scoring</strong> on every run</li>
               <li>Full statistics and session history</li>
+              <li>Rehearsal reminders to keep you on track</li>
+              <li>Shareable progress cards</li>
               <li>Unlimited productions</li>
-              <li>Camera script scanning</li>
-              <li>Import shared <span style="font-family:'DM Mono',monospace">.offbook</span> files from your cast</li>
-              <li>Shareable session cards</li>
+              <li>Import shared <span style="font-family:'DM Mono',monospace">.offbook</span> files from your cast or director</li>
               <li>One payment — no subscription, ever</li>
             </ul>
             <a class="btn btn-primary" href="download.html">Get OffBook</a>
@@ -130,7 +154,7 @@
           <article class="card reveal d1">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l2.9 6.2 6.6.9-4.8 4.7 1.2 6.7L12 17.4 6.1 20.5l1.2-6.7L2.5 9.1l6.6-.9z"/></svg>
             <h3>Try before you buy</h3>
-            <p>Everyone gets a free trial of the Pro features, so you can see confidence scoring working on your own script first.</p>
+            <p>Your first ten rehearsal sessions have confidence scoring, statistics and share cards unlocked, so you can see them working on your own script before you decide.</p>
           </article>
           <article class="card reveal d2">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
