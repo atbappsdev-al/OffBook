@@ -81,8 +81,15 @@ add `coming-soon` to that badge's `<a>` — it greys out and stops being clickab
 The Pro page fetches `pricing.json` — the very same file the in-app paywall reads — so
 the site and the app can't drift apart. Two things come from it:
 
-- **The quoted regular price**, from `baseline_prices` (any element with
-  `data-baseline-price="GBP"` gets filled in; swap the currency code as needed).
+- **The quoted regular price**, from `baseline_prices`. Any element with
+  `data-baseline-price` gets filled in. The page prefers the visitor's **own**
+  currency — chosen from the region in their browser locale, and used only when
+  `baseline_prices` actually publishes that currency — so an Australian reader is
+  quoted A$ rather than sterling. The code in the attribute is the fallback for
+  everyone else: an unmapped region, a currency with no published baseline, or a
+  browser that reports no region at all. Add a market to `baseline_prices` and this
+  page starts quoting it; the mapping of region to currency lives in `initPricing`
+  in `assets/site.js`.
 - **The Limited-time offer banner**, shown only while `sale_active` is `true` and
   `sale_ends_at` hasn't passed. Over 48 hours out it prints "Offer ends 14 August 2026"
   in the reader's own locale; inside 48 hours it counts down live, and it removes itself

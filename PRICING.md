@@ -25,6 +25,7 @@ apps what **full price** is, so they can tell whether today's price is a discoun
 - [Why this file exists](#why-this-file-exists)
 - [How to run a sale](#how-to-run-a-sale)
 - [How to end a sale](#how-to-end-a-sale)
+- [Adding a new market](#adding-a-new-market)
 - [Scheduling the end](#scheduling-the-end)
 - [How long until users see it](#how-long-until-users-see-it)
 - [Field reference](#field-reference)
@@ -112,6 +113,70 @@ back anyway so the document reflects reality.
 **If you permanently change a regular price**, update that currency's entry here to
 match. A stale baseline that's *above* the new regular price would badge full price as
 a discount for as long as it's wrong.
+
+---
+
+## Adding a new market
+
+Releasing in a country you haven't sold in before needs one line here, and it is easy
+to forget because **nothing breaks without it**. The apps fail closed per currency: a
+storefront whose currency has no `baseline_prices` entry simply never badges, silently,
+for as long as it's missing. A sale you switch on globally would run everywhere you've
+listed and quietly skip everywhere you haven't.
+
+What to do, per market:
+
+1. **Find the regular price your store actually charges there.** App Store Connect and
+   Play Console both set local prices from a tier, and the tier rarely converts to a
+   round number — the euro price of a £4.99 product is whatever the console says it is,
+   not £4.99 at today's exchange rate. Read it off the console; don't calculate it.
+2. **Check both stores agree.** iOS and Android share this one document, so a currency
+   whose App Store and Play prices differ needs the *higher* of the two as the baseline,
+   or the cheaper platform will badge at full price. Better still, set the same price on
+   both.
+3. **Add the currency, not the country.** The key is the ISO 4217 code the store reports
+   for that storefront, and one entry covers every country using it.
+4. **Verify on a device in that storefront** — the debug log names the gate that closed
+   (`adb logcat -s BillingManager`, or the Xcode console).
+
+**Currencies are shared; countries are not.** Ireland and Malta are both euro, so one
+`"EUR"` entry serves both — and also serves every other euro storefront you sell in,
+whether or not you were thinking about them when you wrote it. Set it to the euro price
+you actually charge.
+
+A worked set, with the codes for the storefronts this document is most often extended
+to. **The amounts below are placeholders** — replace each with the real console figure
+before publishing:
+
+```json
+"baseline_prices": {
+  "GBP": "4.99",
+  "USD": "6.99",
+  "CAD": "6.99",
+  "AUD": "0.00",
+  "EUR": "0.00",
+  "NZD": "0.00",
+  "ZAR": "0.00"
+}
+```
+
+| Market | Currency | Notes |
+|---|---|---|
+| Australia | `AUD` | |
+| Ireland | `EUR` | Shares the entry with Malta and the rest of the eurozone |
+| Malta | `EUR` | Same entry as Ireland |
+| New Zealand | `NZD` | |
+| South Africa | `ZAR` | |
+
+> **Getting a baseline wrong is worse than leaving it out.** A missing entry means no
+> badge — invisible, but honest. A baseline set *above* what the store really charges
+> badges **full price as a discount** in that market, every day, until someone notices.
+> That is a price claim you can't substantiate, so if you aren't certain of the number,
+> publish nothing for that currency until you are.
+
+The marketing site reads the same list: `pro.html` quotes a visitor the baseline for
+their own currency when one is published, and falls back to sterling when it isn't. So
+adding a market here also stops that page quoting Australians a pound price.
 
 ---
 

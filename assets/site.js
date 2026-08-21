@@ -280,7 +280,40 @@
               (priceEls[0] && priceEls[0].getAttribute('data-pricing-src')) ||
               'pricing.json';
 
-    var symbols = { GBP: '£', USD: '$', CAD: 'CA$', EUR: '€', AUD: 'A$' };
+    var symbols = {
+      GBP: '£', USD: '$', CAD: 'CA$', EUR: '€',
+      AUD: 'A$', NZD: 'NZ$', ZAR: 'R'
+    };
+
+    /* Which currency to quote a visitor, by the region in their browser locale.
+       Ireland and Malta are both euro, which is why the value repeats rather
+       than the key being a currency.
+
+       This only chooses between figures already published in pricing.json — it
+       cannot invent one — and an unmapped region, an unpublished currency, or a
+       browser that reports no region at all all fall back to the currency named
+       in the markup. So the worst case is the sterling figure the page quoted
+       before this existed, never a made-up price. */
+    var regionCurrency = {
+      GB: 'GBP', US: 'USD', CA: 'CAD',
+      AU: 'AUD', NZ: 'NZD', ZA: 'ZAR', IE: 'EUR', MT: 'EUR'
+    };
+
+    /* The region is a hint about where someone is, not a statement about which
+       storefront will charge them — an en-US browser in Sydney is ordinary. The
+       copy beside every figure says the store decides the real price, which is
+       what keeps a wrong guess honest rather than misleading. */
+    function visitorCurrency() {
+      var tags = (navigator.languages && navigator.languages.length)
+        ? navigator.languages
+        : [navigator.language || ''];
+      for (var i = 0; i < tags.length; i++) {
+        var match = /[-_]([A-Za-z]{2})(?:[-_]|$)/.exec(tags[i] || '');
+        var currency = match && regionCurrency[match[1].toUpperCase()];
+        if (currency) return currency;
+      }
+      return null;
+    }
 
     fetch(url, { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
@@ -288,8 +321,12 @@
         if (!data) return;
 
         if (data.baseline_prices) {
+          var local = visitorCurrency();
           priceEls.forEach(function (el) {
             var cur = el.getAttribute('data-baseline-price') || 'GBP';
+            /* Prefer the visitor's own currency, but only when it is actually
+               published — an unlisted market keeps the declared fallback. */
+            if (local && data.baseline_prices[local]) cur = local;
             var value = data.baseline_prices[cur];
             if (value) el.textContent = (symbols[cur] || '') + value;
           });
