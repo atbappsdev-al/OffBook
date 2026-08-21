@@ -1,9 +1,10 @@
 {
-  "_readme": "Controls the LIMITED-TIME OFFER badge on the in-app Pro paywall in both OffBook apps. baseline_prices are the REGULAR (full) prices per currency, written as strings — not the sale price. Publishing guide: PRICING.md in this repo.",
+  "_readme": "Controls the LIMITED-TIME OFFER badge on the in-app Pro paywall in both OffBook apps. baseline_prices are the REGULAR (full) prices per currency, written as strings — not the sale price. sale_starts_at / sale_ends_at are RFC 3339 instants WITH an explicit offset; null on both means no scheduled window. Publishing guide: PRICING.md in this repo.",
 
   "schema_version": 1,
   "sale_active": false,
-  "sale_ends_at": "2026-08-14T23:59:59Z",
+  "sale_starts_at": null,
+  "sale_ends_at": null,
   "baseline_prices": {
     "GBP": "4.99",
     "USD": "6.99",
