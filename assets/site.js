@@ -334,9 +334,20 @@
 
         if (!banner || data.sale_active !== true) return;
 
-        var ends = parseSaleEnd(data.sale_ends_at);
-        if (ends === false) return;           // unusable value — show nothing
-        if (ends && ends.getTime() <= Date.now()) return;
+        var starts = parseSaleInstant(data.sale_starts_at);
+        var ends = parseSaleInstant(data.sale_ends_at);
+        if (starts === false || ends === false) return;   // unusable — show nothing
+
+        var now = Date.now();
+        /* The start bound matters more here than in the apps. They also require
+           the visitor's own store price to be below baseline, so a window that
+           opens early still shows no badge — the price gate catches it. This page
+           knows neither price nor storefront, so `sale_starts_at` is the only
+           thing standing between a config published in advance and a banner
+           announcing an offer that hasn't begun. */
+        if (starts && starts.getTime() > now) return;
+        if (ends && ends.getTime() <= now) return;
+        if (starts && ends && starts.getTime() >= ends.getTime()) return;
 
         banner.classList.add('show');
         startCountdown(banner, ends);
@@ -344,13 +355,15 @@
       .catch(function () { /* no banner; the figure in the markup stands */ });
   }
 
-  /* PRICING.md's rules for sale_ends_at, kept deliberately faithful:
-       absent / null / ""      -> null  (no end date, runs until switched off)
+  /* PRICING.md's rules for sale_starts_at / sale_ends_at, kept deliberately
+     faithful:
+       absent / null / ""      -> null  (unbounded on that side)
        a valid instant WITH an explicit UTC offset -> Date
        anything else           -> false (suppresses the banner entirely)
-     That last case is the important one: "absent" already means "runs forever",
-     so treating a typo as absent would leave a bad banner up indefinitely. */
-  function parseSaleEnd(raw) {
+     That last case is the important one: "absent" already means "unbounded", so
+     treating a typo as absent would leave a bad banner up indefinitely — or, for
+     a start date, put one up early. */
+  function parseSaleInstant(raw) {
     if (raw === undefined || raw === null || raw === '') return null;
     if (typeof raw !== 'string') return false;
     if (!/(?:Z|[+-]\d{2}:?\d{2})$/.test(raw)) return false;   // zone-less is rejected

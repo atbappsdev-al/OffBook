@@ -26,7 +26,8 @@ apps what **full price** is, so they can tell whether today's price is a discoun
 - [How to run a sale](#how-to-run-a-sale)
 - [How to end a sale](#how-to-end-a-sale)
 - [Adding a new market](#adding-a-new-market)
-- [Scheduling the end](#scheduling-the-end)
+- [Scheduling the window](#scheduling-the-window)
+- [Timezones, and why the two windows can disagree](#timezones-and-why-the-two-windows-can-disagree)
 - [How long until users see it](#how-long-until-users-see-it)
 - [Field reference](#field-reference)
 - [Traps worth remembering](#traps-worth-remembering)
@@ -65,8 +66,8 @@ Hence: full price per currency, published here, with a master switch.
    about — the price you're discounting *from*, not the sale price. Leave those values
    alone during the sale.
 3. Set `"sale_active": true`.
-4. Optionally set `"sale_ends_at"` so the badge switches itself off on schedule — see
-   [Scheduling the end](#scheduling-the-end).
+4. Optionally set `"sale_starts_at"` and `"sale_ends_at"` so the badge switches itself
+   on and off on schedule — see [Scheduling the window](#scheduling-the-window).
 5. Commit and push. GitHub Pages redeploys in a minute or two.
 6. Verify the live file loads and every rule on this page still holds:
    ```
@@ -79,6 +80,7 @@ Hence: full price per currency, published here, with a master switch.
 {
   "schema_version": 1,
   "sale_active": true,
+  "sale_starts_at": "2026-08-07T00:00:00Z",
   "sale_ends_at": "2026-08-14T23:59:59Z",
   "baseline_prices": {
     "GBP": "4.99",
@@ -95,6 +97,7 @@ Hence: full price per currency, published here, with a master switch.
 A user sees the badge only when **all** of these are true:
 
 - `sale_active` is `true`, **and**
+- `sale_starts_at` is absent or already past, **and**
 - `sale_ends_at` is absent or still in the future, **and**
 - the store's price for **their** storefront is **strictly below** the
   `baseline_prices` entry for **their** currency.
@@ -203,14 +206,30 @@ adding a market here also stops that page quoting Australians a pound price.
 
 ---
 
-## Scheduling the end
+## Scheduling the window
 
-`sale_ends_at` is an optional instant after which the badge stops appearing, whether
-or not anyone is at a keyboard:
+`sale_starts_at` and `sale_ends_at` are optional instants that open and close the
+badge on their own, whether or not anyone is at a keyboard:
 
 ```json
+"sale_active": true,
+"sale_starts_at": "2026-08-07T00:00:00Z",
 "sale_ends_at": "2026-08-14T23:59:59Z"
 ```
+
+That is the whole point of them: you can publish a promotion in advance, to line up
+with a price change you have already scheduled in App Store Connect / Play Console,
+and then leave it alone. **Start is inclusive, end is exclusive**, so back-to-back
+windows can't both badge for a tick.
+
+`sale_active` stays what it always was — the master switch, and your kill switch.
+Dates cannot override it: `false` means no badge anywhere, whatever window you have
+published. Leave it `true` and let the dates do the work if you prefer, but keep it,
+because ending a sale early by flipping one boolean beats editing timestamps under
+pressure.
+
+Only `sale_ends_at` is ever displayed. A badge that isn't up yet has nothing to
+caption, and "Offer starts Friday" on a paywall is an advert for not buying today.
 
 The paywall prints it under the badge as **"Offer ends 14 August 2026"**, formatted in
 each user's own locale and timezone — so a sale that ends at one instant worldwide
@@ -232,20 +251,70 @@ Fractional seconds are accepted. A bare `2026-08-14` or a zone-less
 instant in Auckland than in Los Angeles and there is no safe way to guess which you
 meant.
 
-**Absent, `null`, or `""` means no end date** — the sale runs until you flip the
-switch, exactly as it did before this field existed. That is the ordinary way to clear
-it.
+**Absent, `null`, or `""` means unbounded on that side** — no start means the sale has
+already begun, no end means it runs until you flip the switch, exactly as it did before
+these fields existed. That is the ordinary way to clear either.
 
-**Anything else that isn't a usable instant means no badge at all.** This is the one
-field where a mistake closes the badge rather than being ignored: everywhere else in
-this document an unreadable value reads as absent, but here "absent" means *runs
-forever*, so a typo would otherwise be the single publisher error that keeps a badge
-up. `"14/08/2026"`, `"next friday"`, an epoch number, or a `true` all suppress it.
+**Anything else that isn't a usable instant means no badge at all.** These are the two
+fields where a mistake closes the badge rather than being ignored: everywhere else in
+this document an unreadable value reads as absent, but here "absent" means *unbounded*,
+so a typo would otherwise be the one publisher error that opens a badge — early, in the
+case of a start date, for a discount the store hasn't begun giving. `"14/08/2026"`,
+`"next friday"`, an epoch number, or a `true` all suppress the badge.
+
+**A start at or after the end is rejected outright.** It is always a mistake — a typo'd
+year, or the two values swapped — and a window nothing can fall inside would otherwise
+just silently never badge, which is the hardest failure here to spot. `check-pricing.mjs`
+names it.
 
 The comparison uses the **device's own clock** at the moment a price is displayed. A
-user who winds their clock back can hold a badge open a little longer; that is
-acceptable, because the price gate still applies — they cannot conjure a discount the
-store isn't giving, only a stale label on a real one.
+user who winds their clock can hold a badge open a little longer, or open it a little
+early; that is acceptable, because the price gate still applies — they cannot conjure a
+discount the store isn't giving, only a stale label on a real one.
+
+---
+
+## Timezones, and why the two windows can disagree
+
+There are two windows in play and they are not the same object:
+
+- **The store's discount**, scheduled in App Store Connect / Play Console. Depending on
+  how you schedule it, this can take effect per territory rather than at one instant.
+- **This document's window**, which is a single instant worldwide on each side.
+
+They will not line up exactly. Offsets run from UTC−12 to UTC+14, so a window written
+in UTC can be up to fourteen hours early in Kiritimati and twelve hours late in Baker
+Island relative to a local-midnight rollout.
+
+**That is safe, and deliberately so, because the badge has a third gate: the price.**
+`isOnSale` requires the store's own price for that storefront to be *strictly below*
+the published baseline. Which means every way the two windows can disagree fails in the
+harmless direction:
+
+| Situation | What the user sees | Harm |
+|---|---|---|
+| Our window opens before the store drops the price | No badge — the price gate is still closed | None |
+| Store drops the price before our window opens | No badge until the window opens | Badge is late |
+| Store restores the price before our window closes | No badge — the price gate closes again | None |
+| Our window closes before the store restores the price | Badge stops, discount continues quietly | Badge is early |
+
+So the badge can never claim a discount the store isn't giving. The worst case is a
+badge that is late or short — a missed marketing beat, not a false price claim. This is
+also why an older build that has never heard of `sale_starts_at` is fine: it runs on the
+switch and the price gate alone, so it starts badging the moment the store price
+actually drops.
+
+**If you want the badge to track the discount tightly**, inset the window rather than
+matching the store's nominal dates: start it after the discount is live in your
+last territory, end it before it lapses in your first. The price gate covers you either
+way — insetting just means the badge is up for all of the window rather than most of it.
+
+**Both fields are instants, not dates.** `2026-08-14T23:59:59Z` and
+`2026-08-15T00:59:59+01:00` are the same moment and both fine. A bare `2026-08-14` is
+rejected precisely because it is a different instant in Auckland than in Los Angeles.
+The end date is then formatted back into each user's own local date for display, so
+everyone reads a correct date for where they are — an Australian may correctly see
+"Offer ends 15 August" for a window that closes on the 14th in UTC.
 
 ---
 
@@ -274,16 +343,20 @@ Practical upshot: push the change, wait for Pages to redeploy (a minute or two),
 reopen the paywall — you should see the badge appear or disappear immediately. There
 is no cache window to wait out.
 
-> **`sale_ends_at` needs a build that knows about it — both current ones do.** It
-> shipped in Android 1.11.0 (31) and iOS 1.3.0 (9), so the field is live on both
-> stores and a scheduled end works as described above.
+> **Which builds honour which field.** `sale_ends_at` shipped in Android 1.11.0 (31)
+> and iOS 1.3.0 (9), so a scheduled end works on both stores today.
+> **`sale_starts_at` has not shipped yet** — it is newer than both, and until a release
+> carries it, every install ignores it.
 >
-> What remains is users who haven't updated. Older installs ignore unknown fields by
-> design, so they keep badging past the end date until `sale_active` goes `false`.
-> That is the ordinary way to end a sale anyway — flip the switch when the promotion
-> is over and every install stops badging, whatever build it is on. Treat
-> `sale_ends_at` as the belt and `sale_active` as the braces, rather than a reason to
-> skip either.
+> That is not a reason to leave it out of a document you publish now. An install that
+> ignores the start date runs the sale on the switch and the price gate alone, so it
+> starts badging the moment the store actually drops the price — which is the behaviour
+> the start date is approximating anyway. See
+> [Timezones](#timezones-and-why-the-two-windows-can-disagree).
+>
+> The same holds for users who simply haven't updated. `sale_active` is the one control
+> every install honours, so flipping it `false` remains the way to stop a sale
+> everywhere at once. Treat the dates as the belt and the switch as the braces.
 
 ---
 
@@ -293,7 +366,8 @@ is no cache window to wait out.
 |---|---|---|
 | `schema_version` | **Yes** | Must be exactly `1`. Any other value → the whole document is discarded and no badge shows |
 | `sale_active` | No | `true` to allow the badge, `false` (or omitted) to suppress it everywhere |
-| `sale_ends_at` | No | RFC 3339 instant with an explicit offset. Absent/`null`/`""` → no end date. Unreadable → **no badge**. See [Scheduling the end](#scheduling-the-end) |
+| `sale_starts_at` | No | RFC 3339 instant with an explicit offset. Absent/`null`/`""` → already started. Unreadable → **no badge**. Never displayed. See [Scheduling the window](#scheduling-the-window) |
+| `sale_ends_at` | No | RFC 3339 instant with an explicit offset. Absent/`null`/`""` → no end date. Unreadable → **no badge**. Must be after `sale_starts_at`. See [Scheduling the window](#scheduling-the-window) |
 | `baseline_prices` | No | Object of **ISO 4217 currency code → regular price**. Codes are case-insensitive; three letters only. Omitted or empty → no badge anywhere |
 
 Prices must be written as **strings** (`"4.99"`), digits and at most one `.` with up to
@@ -321,11 +395,18 @@ harmless.
   in — the apps deliberately don't guess from other currencies.
 - **Equal isn't below.** A price *equal* to the baseline is full price by definition.
   The same goes for time: at the exact instant of `sale_ends_at`, the sale is over.
-- **A malformed `sale_ends_at` kills the badge outright** — it does not fall back to
+- **A start date is the one date that can go wrong early.** An unreadable
+  `sale_ends_at` costs you a badge; an unreadable `sale_starts_at` would, if it read as
+  absent, put one up before the sale. Both suppress instead — but that is why neither
+  is forgiving.
+- **A malformed `sale_ends_at` or `sale_starts_at` kills the badge outright** — it does not fall back to
   "no end date". This is deliberate, and the opposite of how every other field
   behaves. If a sale silently fails to appear, check this field first.
-- **`sale_ends_at` needs a timezone.** `"2026-08-14"` is rejected, not assumed to mean
+- **Both dates need a timezone.** `"2026-08-14"` is rejected, not assumed to mean
   midnight anywhere.
+- **The store's window and this one need not match.** They can't, across 26 hours of
+  offsets — and they don't have to, because the price gate decides. See
+  [Timezones](#timezones-and-why-the-two-windows-can-disagree).
 - **An end date doesn't put the price back.** It stops the badge only; the store price
   is still yours to restore.
 - **Nothing here is user-visible copy.** The badge wording lives in the apps; this
@@ -354,6 +435,9 @@ harmless.
 - [ ] `sale_active` is the value you intend.
 - [ ] If `sale_ends_at` is set: it is RFC 3339 **with an offset**, and it is in the
       future. If it isn't set, you have a plan for ending the sale by hand.
+- [ ] If `sale_starts_at` is set: same format, and it is **before** the end. Remember no
+      shipped build honours it yet — those installs badge as soon as the store price
+      drops.
 - [ ] Every price is a **quoted string**, and is the **regular** price.
 - [ ] Every currency code is three letters and matches the storefronts you care about.
 - [ ] `node tools/check-pricing.mjs` passes — it applies every rule on this page,
@@ -378,7 +462,8 @@ harmless.
 Both platforms share this document byte-for-byte and have parser tests pinned to the
 shape above (`ProPricingParserTests` / `ProPricingParserTest`). If you change the
 schema, change both apps and bump `schema_version` — but note that a bump makes every
-already-shipped build discard the document, so prefer adding fields. `sale_ends_at`
+already-shipped build discard the document, so prefer adding fields. `sale_starts_at`
+and `sale_ends_at`
 was added exactly that way, without a bump.
 
 The same fail-closed, cache-first pattern powers `announcements.json` (see

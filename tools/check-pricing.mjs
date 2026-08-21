@@ -74,27 +74,54 @@ function main(raw, origin) {
   }
   const saleActive = doc.sale_active === true;
 
-  // sale_ends_at — the one field where an unreadable value CLOSES the badge.
+  // sale_starts_at / sale_ends_at — the two fields where an unreadable value
+  // CLOSES the badge rather than reading as absent.
   let windowOpen = true;
-  if ('sale_ends_at' in doc && doc.sale_ends_at !== null && doc.sale_ends_at !== '') {
-    const endsAt = doc.sale_ends_at;
-    if (typeof endsAt !== 'string') {
-      problems.push(`sale_ends_at is ${JSON.stringify(endsAt)} (not a string) — this suppresses the badge entirely.`);
-      windowOpen = false;
-    } else if (!/(?:Z|[+-]\d{2}:?\d{2})$/.test(endsAt.trim()) || Number.isNaN(Date.parse(endsAt.trim()))) {
+
+  /** null = absent (unbounded), Date = usable, false = published but unusable. */
+  const bound = (field) => {
+    if (!(field in doc) || doc[field] === null || doc[field] === '') return null;
+    const raw = doc[field];
+    if (typeof raw !== 'string') {
+      problems.push(`${field} is ${JSON.stringify(raw)} (not a string) — this suppresses the badge entirely.`);
+      return false;
+    }
+    if (!/(?:Z|[+-]\d{2}:?\d{2})$/.test(raw.trim()) || Number.isNaN(Date.parse(raw.trim()))) {
       problems.push(
-        `sale_ends_at "${endsAt}" is not an RFC 3339 instant with an explicit offset ` +
+        `${field} "${raw}" is not an RFC 3339 instant with an explicit offset ` +
         `(e.g. 2026-08-14T23:59:59Z) — this suppresses the badge entirely.`
       );
+      return false;
+    }
+    return new Date(raw.trim());
+  };
+
+  const starts = bound('sale_starts_at');
+  const ends = bound('sale_ends_at');
+  if (starts === false || ends === false) windowOpen = false;
+
+  const now = Date.now();
+  if (starts instanceof Date && ends instanceof Date && starts.getTime() >= ends.getTime()) {
+    problems.push(
+      `sale_starts_at (${starts.toISOString()}) is not before sale_ends_at ` +
+      `(${ends.toISOString()}) — nothing can fall inside that window, so the badge never shows.`
+    );
+    windowOpen = false;
+  }
+  if (starts instanceof Date) {
+    if (starts.getTime() > now) {
+      notes.push(`sale_starts_at (${starts.toISOString()}) is in the future — no badge until then.`);
       windowOpen = false;
     } else {
-      const ends = new Date(endsAt.trim());
-      if (ends.getTime() <= Date.now()) {
-        notes.push(`sale_ends_at (${ends.toISOString()}) has already passed — no badge, whatever sale_active says.`);
-        windowOpen = false;
-      } else {
-        notes.push(`Sale window ends ${ends.toISOString()}.`);
-      }
+      notes.push(`Sale window opened ${starts.toISOString()}.`);
+    }
+  }
+  if (ends instanceof Date) {
+    if (ends.getTime() <= now) {
+      notes.push(`sale_ends_at (${ends.toISOString()}) has already passed — no badge, whatever sale_active says.`);
+      windowOpen = false;
+    } else {
+      notes.push(`Sale window ends ${ends.toISOString()}.`);
     }
   }
 
@@ -168,11 +195,22 @@ function main(raw, origin) {
 
   const badging = saleActive && windowOpen;
   console.log('✓ Document is valid.');
-  console.log(
-    badging
-      ? `  A sale is live: any of ${published.join(', ')} whose store price is strictly below the figure above will badge.`
-      : '  No badge anywhere right now (sale_active is false, or the window has closed).'
-  );
+  if (badging) {
+    console.log(
+      `  A sale is live: any of ${published.join(', ')} whose store price is strictly ` +
+      `below the figure above will badge.`
+    );
+  } else if (!saleActive) {
+    console.log('  No badge anywhere: sale_active is false.');
+  } else if (starts instanceof Date && starts.getTime() > now) {
+    // Worth naming, because it is the one not-badging state that is a success.
+    console.log(
+      `  No badge yet: this is a scheduled sale waiting to start at ${starts.toISOString()}. ` +
+      `Nothing to fix.`
+    );
+  } else {
+    console.log('  No badge anywhere: the sale window is not open.');
+  }
 }
 
 function fail(message) {

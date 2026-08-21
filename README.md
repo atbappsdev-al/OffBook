@@ -90,15 +90,22 @@ the site and the app can't drift apart. Two things come from it:
   browser that reports no region at all. Add a market to `baseline_prices` and this
   page starts quoting it; the mapping of region to currency lives in `initPricing`
   in `assets/site.js`.
-- **The Limited-time offer banner**, shown only while `sale_active` is `true` and
-  `sale_ends_at` hasn't passed. Over 48 hours out it prints "Offer ends 14 August 2026"
-  in the reader's own locale; inside 48 hours it counts down live, and it removes itself
-  the moment the deadline passes, with no reload.
+- **The Limited-time offer banner**, shown only while `sale_active` is `true`,
+  `sale_starts_at` has arrived, and `sale_ends_at` hasn't passed. Over 48 hours out it
+  prints "Offer ends 14 August 2026" in the reader's own locale; inside 48 hours it
+  counts down live, and it removes itself the moment the deadline passes, with no
+  reload.
 
-`sale_ends_at` is handled exactly as PRICING.md specifies: absent, `null` or `""` means
-no end date; a value without an explicit UTC offset, or one that isn't a usable instant,
-suppresses the banner rather than being ignored. Same reasoning as the apps — "absent"
-already means *runs forever*, so a typo must close the banner, not open it indefinitely.
+Both dates are handled exactly as PRICING.md specifies: absent, `null` or `""` means
+unbounded on that side; a value without an explicit UTC offset, or one that isn't a
+usable instant, suppresses the banner rather than being ignored. Same reasoning as the
+apps — "absent" already means *unbounded*, so a typo must close the banner, not open it.
+
+**`sale_starts_at` matters more here than in the apps.** They also require the visitor's
+own store price to be below baseline, so a window that opens early still shows no badge
+— the price gate catches it. This page knows neither price nor storefront, so the start
+date is the only thing standing between a promotion published in advance and a banner
+announcing an offer that hasn't begun.
 
 **One rule the website can't apply.** The app also requires the user's own storefront
 price to be strictly below their currency's baseline; a web page knows neither the
