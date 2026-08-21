@@ -83,7 +83,11 @@ Hence: full price per currency, published here, with a master switch.
   "baseline_prices": {
     "GBP": "4.99",
     "USD": "6.99",
-    "CAD": "6.99"
+    "CAD": "6.99",
+    "AUD": "9.99",
+    "EUR": "5.99",
+    "NZD": "11.99",
+    "ZAR": "110.00"
   }
 }
 ```
@@ -172,29 +176,20 @@ What to do, per market:
 whether or not you were thinking about them when you wrote it. Set it to the euro price
 you actually charge.
 
-A worked set, with the codes for the storefronts this document is most often extended
-to. **The amounts below are placeholders** — replace each with the real console figure
-before publishing:
+The currently published set, which is what the live document holds:
 
-```json
-"baseline_prices": {
-  "GBP": "4.99",
-  "USD": "6.99",
-  "CAD": "6.99",
-  "AUD": "0.00",
-  "EUR": "0.00",
-  "NZD": "0.00",
-  "ZAR": "0.00"
-}
-```
-
-| Market | Currency | Notes |
+| Market | Currency | Regular price |
 |---|---|---|
-| Australia | `AUD` | |
-| Ireland | `EUR` | Shares the entry with Malta and the rest of the eurozone |
+| United Kingdom | `GBP` | 4.99 |
+| United States | `USD` | 6.99 |
+| Canada | `CAD` | 6.99 |
+| Australia | `AUD` | 9.99 |
+| Ireland | `EUR` | 5.99 — shares the entry with Malta and the rest of the eurozone |
 | Malta | `EUR` | Same entry as Ireland |
-| New Zealand | `NZD` | |
-| South Africa | `ZAR` | |
+| New Zealand | `NZD` | 11.99 |
+| South Africa | `ZAR` | 110.00 |
+
+Anywhere not in that list sells at whatever the store charges and simply never badges.
 
 > **Getting a baseline wrong is worse than leaving it out.** A missing entry means no
 > badge — invisible, but honest. A baseline set *above* what the store really charges
