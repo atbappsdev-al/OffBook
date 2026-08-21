@@ -274,11 +274,16 @@ Practical upshot: push the change, wait for Pages to redeploy (a minute or two),
 reopen the paywall — you should see the badge appear or disappear immediately. There
 is no cache window to wait out.
 
-> **`sale_ends_at` only works in builds that know about it.** It was added after the
-> apps that are live today, and older builds ignore unknown fields by design — they
-> will keep badging past the end date until `sale_active` goes `false`. Until the
-> builds carrying it have shipped on both stores, treat the field as documentation of
-> intent and still end sales by hand.
+> **`sale_ends_at` needs a build that knows about it — both current ones do.** It
+> shipped in Android 1.11.0 (31) and iOS 1.3.0 (9), so the field is live on both
+> stores and a scheduled end works as described above.
+>
+> What remains is users who haven't updated. Older installs ignore unknown fields by
+> design, so they keep badging past the end date until `sale_active` goes `false`.
+> That is the ordinary way to end a sale anyway — flip the switch when the promotion
+> is over and every install stops badging, whatever build it is on. Treat
+> `sale_ends_at` as the belt and `sale_active` as the braces, rather than a reason to
+> skip either.
 
 ---
 
