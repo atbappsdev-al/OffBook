@@ -1,0 +1,194 @@
+#!/usr/bin/env node
+//
+// Validates pricing.json the way the two apps actually read it, and says which
+// storefronts would badge. Run it before you push — see PRICING.md.
+//
+//   node tools/check-pricing.mjs                      # the local file
+//   node tools/check-pricing.mjs --live               # the published document
+//   node tools/check-pricing.mjs --expect AUD,EUR,GBP # ...and require these
+//
+// Why this exists: every mistake in this document fails CLOSED, so a broken
+// file and a quiet week look identical — no badge, no error, nothing to read.
+// `jq .` proves the JSON parses, which is the one class of error the apps are
+// already tolerant of. It cannot tell you that `"GBP": 4.99` was dropped for
+// being unquoted, or that a currency you now sell in was never listed.
+//
+// The rules below are ported from ProPricingParser.swift / ProPricingParser.kt.
+// If you change the schema, change this too.
+
+const LIVE_URL = 'https://atbappsdev-al.github.io/OffBook/pricing.json';
+const SUPPORTED_SCHEMA_VERSION = 1;
+
+const args = process.argv.slice(2);
+const useLive = args.includes('--live');
+const expectFlag = args.indexOf('--expect');
+const expected = expectFlag === -1
+  ? []
+  : (args[expectFlag + 1] ?? '').split(',').map(c => c.trim().toUpperCase()).filter(Boolean);
+
+const problems = [];
+const notes = [];
+
+/** Exactly three ASCII letters, as both parsers require. */
+function currencyCode(raw) {
+  const trimmed = String(raw).trim().toUpperCase();
+  return /^[A-Z]{3}$/.test(trimmed) ? trimmed : null;
+}
+
+/** The exact-decimal rule: digits, at most one '.', up to six decimal places. */
+function exactDecimal(raw) {
+  const text = String(raw).trim();
+  if (!text) return null;
+  const parts = text.split('.');
+  if (parts.length > 2) return null;
+  const [whole, fraction = ''] = parts;
+  if (!whole || (parts.length === 2 && !fraction)) return null;
+  if (fraction.length > 6) return null;
+  const digits = whole + fraction;
+  if (digits.length > 18 || !/^[0-9]+$/.test(digits)) return null;
+  const value = Number(text);
+  return value > 0 ? value : null;
+}
+
+function main(raw, origin) {
+  console.log(`Reading ${origin}\n`);
+
+  let doc;
+  try {
+    doc = JSON.parse(raw);
+  } catch (error) {
+    fail(`not valid JSON — every app discards it and no badge shows anywhere.\n  ${error.message}`);
+    return;
+  }
+
+  if (doc.schema_version !== SUPPORTED_SCHEMA_VERSION) {
+    problems.push(
+      `schema_version is ${JSON.stringify(doc.schema_version)}, must be ${SUPPORTED_SCHEMA_VERSION}. ` +
+      `The whole document is discarded, so nothing below matters.`
+    );
+  }
+
+  // sale_active
+  if ('sale_active' in doc && typeof doc.sale_active !== 'boolean') {
+    problems.push(`sale_active is ${JSON.stringify(doc.sale_active)}; a non-boolean reads as false (no badge anywhere).`);
+  }
+  const saleActive = doc.sale_active === true;
+
+  // sale_ends_at — the one field where an unreadable value CLOSES the badge.
+  let windowOpen = true;
+  if ('sale_ends_at' in doc && doc.sale_ends_at !== null && doc.sale_ends_at !== '') {
+    const endsAt = doc.sale_ends_at;
+    if (typeof endsAt !== 'string') {
+      problems.push(`sale_ends_at is ${JSON.stringify(endsAt)} (not a string) — this suppresses the badge entirely.`);
+      windowOpen = false;
+    } else if (!/(?:Z|[+-]\d{2}:?\d{2})$/.test(endsAt.trim()) || Number.isNaN(Date.parse(endsAt.trim()))) {
+      problems.push(
+        `sale_ends_at "${endsAt}" is not an RFC 3339 instant with an explicit offset ` +
+        `(e.g. 2026-08-14T23:59:59Z) — this suppresses the badge entirely.`
+      );
+      windowOpen = false;
+    } else {
+      const ends = new Date(endsAt.trim());
+      if (ends.getTime() <= Date.now()) {
+        notes.push(`sale_ends_at (${ends.toISOString()}) has already passed — no badge, whatever sale_active says.`);
+        windowOpen = false;
+      } else {
+        notes.push(`Sale window ends ${ends.toISOString()}.`);
+      }
+    }
+  }
+
+  // baseline_prices
+  const baselines = {};
+  const rawBaselines = doc.baseline_prices;
+  if (rawBaselines === undefined) {
+    problems.push('baseline_prices is missing — no currency can ever badge.');
+  } else if (rawBaselines === null || typeof rawBaselines !== 'object' || Array.isArray(rawBaselines)) {
+    problems.push(`baseline_prices is ${JSON.stringify(rawBaselines)}, must be an object of currency code to price.`);
+  } else {
+    for (const [key, value] of Object.entries(rawBaselines)) {
+      const code = currencyCode(key);
+      if (!code) {
+        problems.push(`baseline_prices key "${key}" is not a three-letter ISO 4217 code — silently dropped.`);
+        continue;
+      }
+      if (typeof value === 'number') {
+        // Whole numbers are exact in JSON; fractional ones can only arrive via a
+        // float, which is the imprecision this document exists to avoid.
+        if (!Number.isInteger(value) || value <= 0) {
+          problems.push(
+            `${code} is the unquoted number ${value} — silently dropped. ` +
+            `Write it as a string: "${code}": "${value}".`
+          );
+          continue;
+        }
+        baselines[code] = value;
+        continue;
+      }
+      if (typeof value !== 'string') {
+        problems.push(`${code} is ${JSON.stringify(value)} — silently dropped. Write the price as a string.`);
+        continue;
+      }
+      const parsed = exactDecimal(value);
+      if (parsed === null) {
+        problems.push(
+          `${code} is "${value}", which is not a plain price — silently dropped. ` +
+          `Digits and at most one "." (no currency symbol, comma, exponent or sign).`
+        );
+        continue;
+      }
+      baselines[code] = parsed;
+    }
+  }
+
+  const published = Object.keys(baselines).sort();
+  console.log(`sale_active:  ${saleActive}`);
+  console.log(`baselines:    ${published.length ? published.map(c => `${c} ${baselines[c]}`).join(', ') : 'none'}`);
+  for (const note of notes) console.log(`note:         ${note}`);
+
+  for (const code of expected) {
+    if (!currencyCode(code)) {
+      problems.push(`--expect lists "${code}", which is not a three-letter currency code.`);
+    } else if (!published.includes(code)) {
+      problems.push(
+        `${code} has no usable baseline, so that storefront can never show the badge — ` +
+        `silently, for as long as it is missing.`
+      );
+    }
+  }
+
+  console.log('');
+  if (problems.length) {
+    console.log(`${problems.length} problem${problems.length === 1 ? '' : 's'}:\n`);
+    for (const problem of problems) console.log(`  ✗ ${problem}`);
+    console.log('');
+    process.exitCode = 1;
+    return;
+  }
+
+  const badging = saleActive && windowOpen;
+  console.log('✓ Document is valid.');
+  console.log(
+    badging
+      ? `  A sale is live: any of ${published.join(', ')} whose store price is strictly below the figure above will badge.`
+      : '  No badge anywhere right now (sale_active is false, or the window has closed).'
+  );
+}
+
+function fail(message) {
+  console.log(`  ✗ ${message}`);
+  process.exitCode = 1;
+}
+
+if (useLive) {
+  const response = await fetch(`${LIVE_URL}?t=${Math.floor(Date.now() / 1000)}`, { cache: 'no-store' });
+  if (!response.ok) {
+    console.error(`Could not fetch ${LIVE_URL} — HTTP ${response.status}`);
+    process.exit(1);
+  }
+  main(await response.text(), LIVE_URL);
+} else {
+  const { readFileSync } = await import('node:fs');
+  const path = new URL('../pricing.json', import.meta.url);
+  main(readFileSync(path, 'utf8'), 'pricing.json');
+}

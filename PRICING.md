@@ -68,9 +68,9 @@ Hence: full price per currency, published here, with a master switch.
 4. Optionally set `"sale_ends_at"` so the badge switches itself off on schedule — see
    [Scheduling the end](#scheduling-the-end).
 5. Commit and push. GitHub Pages redeploys in a minute or two.
-6. Verify the live file loads and is valid JSON:
+6. Verify the live file loads and every rule on this page still holds:
    ```
-   curl -s https://atbappsdev-al.github.io/OffBook/pricing.json | jq .
+   node tools/check-pricing.mjs --live
    ```
 
 ### Copy-paste template
@@ -136,7 +136,16 @@ What to do, per market:
    both.
 3. **Add the currency, not the country.** The key is the ISO 4217 code the store reports
    for that storefront, and one entry covers every country using it.
-4. **Verify on a device in that storefront** — the debug log names the gate that closed
+4. **Check the document before you push it**, naming every storefront you now sell in:
+
+   ```
+   node tools/check-pricing.mjs --expect GBP,USD,CAD,AUD,EUR,NZD,ZAR
+   ```
+
+   A currency in `--expect` with no usable baseline fails the check. That is the
+   whole point: the apps treat a missing currency and a currency you never meant to
+   list identically, so this list is the only place the intended set is written down.
+5. **Verify on a device in that storefront** — the debug log names the gate that closed
    (`adb logcat -s BillingManager`, or the Xcode console).
 
 **Currencies are shared; countries are not.** Ireland and Malta are both euro, so one
@@ -309,7 +318,9 @@ harmless.
 - **Everything fails closed.** A malformed document, a wrong `schema_version`, a
   missing file, or no network on a fresh install all mean "no badge" — never a badge
   claiming a discount that isn't real. A broken document therefore looks exactly like
-  "no sale", with no error surface anywhere. Always run the `jq` check.
+  "no sale", with no error surface anywhere. Always run `tools/check-pricing.mjs`;
+  `jq .` only proves the JSON parses, which is the one kind of mistake the apps
+  already tolerate.
 - **Debug builds say why.** Both apps log the reason a badge was suppressed —
   `adb logcat -s BillingManager` on Android, the Xcode console on iOS. That names
   which gate closed instead of leaving you to guess.
@@ -326,8 +337,12 @@ harmless.
       future. If it isn't set, you have a plan for ending the sale by hand.
 - [ ] Every price is a **quoted string**, and is the **regular** price.
 - [ ] Every currency code is three letters and matches the storefronts you care about.
-- [ ] `curl -s https://atbappsdev-al.github.io/OffBook/pricing.json | jq .` returns the
-      document (after Pages redeploys).
+- [ ] `node tools/check-pricing.mjs` passes — it applies every rule on this page,
+      including the ones `jq` cannot see (an unquoted price, a four-letter code, a
+      zone-less date). Add `--expect GBP,USD,CAD,…` to also require a baseline for
+      each storefront you sell in.
+- [ ] After Pages redeploys, the same check against the live document:
+      `node tools/check-pricing.mjs --live`.
 - [ ] Sanity-check on a device: the paywall shows your storefront's real price, the
       badge is present/absent as intended, and the "Offer ends …" line reads the date
       you expect in your own timezone.

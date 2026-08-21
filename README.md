@@ -109,6 +109,10 @@ edit it.
 
 Whatever sits in `baseline_prices` is what this page tells the public your regular price
 is, so it needs to be right for reasons beyond the badge — see [PRICING.md](PRICING.md).
+`node tools/check-pricing.mjs` validates the document the way the apps read it, and
+`--expect GBP,USD,AUD,…` additionally fails when a storefront you sell in has no
+baseline — the omission that is otherwise invisible, because a missing currency just
+never badges.
 
 ---
 
