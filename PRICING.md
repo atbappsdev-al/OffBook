@@ -114,6 +114,16 @@ back anyway so the document reflects reality.
 match. A stale baseline that's *above* the new regular price would badge full price as
 a discount for as long as it's wrong.
 
+**And the stores change prices without asking you.** Apple generates the other
+storefronts' prices from your base country, then
+[periodically re-adjusts them](https://developer.apple.com/help/app-store-connect/manage-in-app-purchases/set-a-price-for-an-in-app-purchase/)
+as exchange rates and local taxes move; Google Play does much the same for
+auto-converted prices. So a baseline that was right the day you wrote it can drift out
+of date with nobody touching either the app or this file — and if the store price moves
+*down* while the baseline stays put, that market starts badging full price as a
+discount on its own. Re-read the real figures off both consoles when you run a sale,
+rather than trusting what is written here.
+
 ---
 
 ## Adding a new market
@@ -126,10 +136,19 @@ listed and quietly skip everywhere you haven't.
 
 What to do, per market:
 
-1. **Find the regular price your store actually charges there.** App Store Connect and
-   Play Console both set local prices from a tier, and the tier rarely converts to a
-   round number — the euro price of a £4.99 product is whatever the console says it is,
-   not £4.99 at today's exchange rate. Read it off the console; don't calculate it.
+1. **Find the regular price your store actually charges there.** Both consoles generate
+   local prices from your base country, and the result rarely converts to a round
+   number — the euro price of a £4.99 product is whatever the console says it is, not
+   £4.99 at today's exchange rate. Read it off the console; don't calculate it, and
+   don't work backwards from this file.
+
+   - **App Store Connect** → your app → **In-App Purchases** → **OffBook Pro** →
+     **Price Schedule**, which lists the generated price for all 175 storefronts.
+   - **Play Console** → **Monetise** → **Products** → **In-app products** → the
+     product → **Manage prices**, which lists the price per country.
+
+   The stores are the source of truth and this file follows them — never the other way
+   round. Changing a store price to match something written here is backwards.
 2. **Check both stores agree.** iOS and Android share this one document, so a currency
    whose App Store and Play prices differ needs the *higher* of the two as the baseline,
    or the cheaper platform will badge at full price. Better still, set the same price on
