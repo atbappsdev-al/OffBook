@@ -11,10 +11,11 @@
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* Apple Services provider token, used by the campaign tagging below.
-     Replace with provider token from App Store Connect > Analytics > campaign
-     link generator */
-  var APPLE_PT_TOKEN = 'APPLE_PT_TOKEN';
+  /* Apple Services provider token, used by the campaign tagging below. It comes
+     from App Store Connect > Analytics > campaign link generator, and is the same
+     token that appears in every campaign link Apple generates for this account —
+     public by design, not a credential. */
+  var APPLE_PT_TOKEN = '129146736';
 
   /* What a campaign value is allowed to be: letters, digits, hyphen and
      underscore, 40 characters at most. Anything else is rejected outright — the

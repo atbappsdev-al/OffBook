@@ -81,9 +81,11 @@ gets `pt`/`ct`/`mt=8`. `cmp` is optional and falls back to `src`.
 
 Two things to know before you spend money on it:
 
-- **`APPLE_PT_TOKEN` at the top of `site.js` is a placeholder.** Until it's replaced with
-  the real provider token from App Store Connect → Analytics → campaign link generator,
-  Apple ignores the tagging. Play needs nothing.
+- **The Apple half needs `APPLE_PT_TOKEN` at the top of `site.js`** — the provider token
+  from App Store Connect → Analytics → campaign link generator, currently `129146736`.
+  It's the token Apple puts in every campaign link it generates for this account, so it's
+  public by design rather than a credential; if the account's token ever changes, this is
+  the one line to update. Play needs no token at all.
 - **Only `src` turns any of this on**, and only a value of letters, digits, hyphen and
   underscore up to 40 characters. No `src`, or anything else in it, and the links stay
   byte-for-byte as the markup has them — which is what every organic visitor gets.
