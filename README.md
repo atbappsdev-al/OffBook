@@ -44,7 +44,7 @@ Shared across all of them:
 | File | Purpose |
 | --- | --- |
 | `assets/site.css` | The whole design system — colours, layout, components, animation |
-| `assets/site.js` | Nav, scroll reveals, the phone demo, chart/bar animation, price + offer banner |
+| `assets/site.js` | Nav, scroll reveals, the phone demo, chart/bar animation, price + offer banner, campaign link tagging |
 | `assets/offbook-logo.png` | Official word-logo (dark-theme variant, from the app) |
 | `assets/offbook-icon.png` | Official app icon, as shipped on the stores |
 | `assets/favicon.png` | Favicon |
@@ -73,6 +73,20 @@ disabled the pages render fully and simply sit still.
 
 **Store badges.** Both live in `download.html`. To mark a store as not-yet-available,
 add `coming-soon` to that badge's `<a>` — it greys out and stops being clickable.
+
+**Campaign tagging.** Link an ad at `download.html?src=fb&cmp=fb_ad_1` and `site.js`
+rewrites the store badges so the install is attributed to that campaign: Play gets a
+`referrer` carrying `utm_source`/`utm_medium=cpc`/`utm_campaign`, and the App Store link
+gets `pt`/`ct`/`mt=8`. `cmp` is optional and falls back to `src`.
+
+Two things to know before you spend money on it:
+
+- **`APPLE_PT_TOKEN` at the top of `site.js` is a placeholder.** Until it's replaced with
+  the real provider token from App Store Connect → Analytics → campaign link generator,
+  Apple ignores the tagging. Play needs nothing.
+- **Only `src` turns any of this on**, and only a value of letters, digits, hyphen and
+  underscore up to 40 characters. No `src`, or anything else in it, and the links stay
+  byte-for-byte as the markup has them — which is what every organic visitor gets.
 
 ---
 

@@ -11,6 +11,17 @@
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* Apple Services provider token, used by the campaign tagging below.
+     Replace with provider token from App Store Connect > Analytics > campaign
+     link generator */
+  var APPLE_PT_TOKEN = 'APPLE_PT_TOKEN';
+
+  /* What a campaign value is allowed to be: letters, digits, hyphen and
+     underscore, 40 characters at most. Anything else is rejected outright — the
+     values land in a URL we hand to a store, so nothing else has any business
+     in them. */
+  var CAMPAIGN_TOKEN = /^[A-Za-z0-9_-]{1,40}$/;
+
   /* ---------------------------------------------------------------- nav -- */
 
   function initNav() {
@@ -410,6 +421,50 @@
     render();
   }
 
+  /* ------------------------------------------------------ campaign tags -- */
+
+  /* Carries an ad click's own tagging through to the stores, so an install can
+     be attributed to the campaign that sent the visitor here.
+
+     Reads `src` (and optionally `cmp`) off the page URL — download.html?src=fb&cmp=fb_ad_1
+     — and rewrites the store links in place. With no `src`, which is every
+     organic visitor, nothing is touched at all: the links stay exactly as the
+     markup has them. */
+  function initCampaignTags() {
+    if (!('URLSearchParams' in window)) return;
+
+    var params = new URLSearchParams(window.location.search);
+    var src = campaignToken(params.get('src'));
+    if (!src) return;                    // organic visit, or an unusable source
+
+    /* An unusable `cmp` is treated the same as an absent one — fall back to the
+       source rather than dropping the tagging altogether. */
+    var cmp = campaignToken(params.get('cmp')) || src;
+
+    /* Play wants one pre-encoded `referrer` value; the tokens above are already
+       URL-safe, so the only encoding needed is of the separators inside it. */
+    var play = 'referrer=utm_source%3D' + src + '%26utm_medium%3Dcpc%26utm_campaign%3D' + cmp;
+    var apple = 'pt=' + APPLE_PT_TOKEN + '&ct=' + cmp + '&mt=8';
+
+    document.querySelectorAll('a[href]').forEach(function (a) {
+      var href = a.getAttribute('href') || '';
+
+      if (href.indexOf('play.google.com') !== -1) {
+        if (href.indexOf('referrer=') === -1) a.setAttribute('href', addQuery(href, play));
+      } else if (href.indexOf('apps.apple.com') !== -1) {
+        if (href.indexOf('ct=') === -1) a.setAttribute('href', addQuery(href, apple));
+      }
+    });
+  }
+
+  function campaignToken(raw) {
+    return (raw && CAMPAIGN_TOKEN.test(raw)) ? raw : null;
+  }
+
+  function addQuery(href, extra) {
+    return href + (href.indexOf('?') === -1 ? '?' : '&') + extra;
+  }
+
   /* --------------------------------------------------------------- misc -- */
 
   function initYear() {
@@ -443,6 +498,7 @@
     initCharts();
     initCounters();
     initPricing();
+    initCampaignTags();
     initYear();
   }
 
