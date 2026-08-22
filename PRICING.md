@@ -224,9 +224,50 @@ windows can't both badge for a tick.
 
 `sale_active` stays what it always was — the master switch, and your kill switch.
 Dates cannot override it: `false` means no badge anywhere, whatever window you have
-published. Leave it `true` and let the dates do the work if you prefer, but keep it,
-because ending a sale early by flipping one boolean beats editing timestamps under
-pressure.
+published, so killing a sale early is still one boolean rather than editing timestamps
+under pressure.
+
+### Running it switch-first, or dates-first
+
+Two supported ways to work:
+
+**Switch-first.** `sale_active` is `false` between sales; you flip it `true` on the day
+and `false` when you're done. Dates optional. Nothing can badge while the switch is
+off, so it is forgiving of everything below.
+
+**Dates-first.** `sale_active` stays `true` permanently and each sale is a window. You
+publish the window once and never touch it again — the badge and the banner both start
+and stop on their own. Between sales the previous window sits in the past, closed, and
+nothing badges.
+
+Dates-first is the better fit if you are scheduling around a store price change, and it
+is what the fields were added for. It has **one rule, and it is load-bearing**:
+
+> **Never leave `sale_active: true` without a usable `sale_ends_at`.**
+
+An unbounded live window is the one shape that is fine in the apps and wrong everywhere
+else. The apps also require the store price to be below baseline, so their badge stops
+when the discount does. `pro.html` cannot check a price — it does not know the visitor's
+storefront — so its banner simply stays up, indefinitely, claiming an offer that ended.
+
+Worse, it turns an ordinary bit of store housekeeping into a false claim. Apple
+re-adjusts generated prices as exchange rates and taxes move. If AUD drifts from 9.99 to
+9.49 while the baseline still reads 9.99, an always-on document badges **every Australian
+user with a LIMITED-TIME OFFER for a sale nobody ran** — and it keeps doing it. With
+`sale_active: false`, or with a window that has closed, the same drift does nothing.
+
+That is what the switch is for, and why dates-first does not mean the switch is
+redundant. It means the end date has inherited its job, so the end date has to be there.
+
+`check-pricing.mjs` warns when it isn't. Working dates-first, promote that warning to an
+error:
+
+```
+node tools/check-pricing.mjs --expect GBP,USD,CAD,AUD,EUR,NZD,ZAR --require-end
+```
+
+A start date with no end is the specific trap: the banner begins on schedule and then
+runs forever.
 
 Only `sale_ends_at` is ever displayed. A badge that isn't up yet has nothing to
 caption, and "Offer starts Friday" on a paywall is an advert for not buying today.
@@ -438,6 +479,9 @@ harmless.
 - [ ] If `sale_starts_at` is set: same format, and it is **before** the end. Remember no
       shipped build honours it yet — those installs badge as soon as the store price
       drops.
+- [ ] Working dates-first (`sale_active` permanently `true`)? Run the checker with
+      `--require-end`. An open-ended live window is a permanent website banner and, on
+      price drift, a badge for a sale you never ran.
 - [ ] Every price is a **quoted string**, and is the **regular** price.
 - [ ] Every currency code is three letters and matches the storefronts you care about.
 - [ ] `node tools/check-pricing.mjs` passes — it applies every rule on this page,

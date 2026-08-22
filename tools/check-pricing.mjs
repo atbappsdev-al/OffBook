@@ -21,12 +21,16 @@ const SUPPORTED_SCHEMA_VERSION = 1;
 
 const args = process.argv.slice(2);
 const useLive = args.includes('--live');
+// For the "sale_active stays true, the dates run each sale" way of working: in
+// that model an unbounded window is not a running sale, it is a permanent one.
+const requireEnd = args.includes('--require-end');
 const expectFlag = args.indexOf('--expect');
 const expected = expectFlag === -1
   ? []
   : (args[expectFlag + 1] ?? '').split(',').map(c => c.trim().toUpperCase()).filter(Boolean);
 
 const problems = [];
+const warnings = [];
 const notes = [];
 
 /** Exactly three ASCII letters, as both parsers require. */
@@ -125,6 +129,21 @@ function main(raw, origin) {
     }
   }
 
+  // An open-ended live sale is the one shape that is fine in the apps and wrong
+  // on the website. The apps also require the store price to be below baseline,
+  // so their badge stops when the discount does. pro.html cannot check a price,
+  // so its banner just stays up — and if a storefront's price later drifts below
+  // baseline on its own (Apple re-adjusts for FX and tax), the apps start badging
+  // a sale nobody ran.
+  if (saleActive && !(ends instanceof Date)) {
+    const message =
+      'sale_active is true with no usable sale_ends_at. The website banner will run ' +
+      'indefinitely, and any later price drift below baseline will badge as a sale. ' +
+      'Set an end date, or set sale_active to false between sales.';
+    if (requireEnd) problems.push(message);
+    else warnings.push(message);
+  }
+
   // baseline_prices
   const baselines = {};
   const rawBaselines = doc.baseline_prices;
@@ -172,6 +191,7 @@ function main(raw, origin) {
   console.log(`sale_active:  ${saleActive}`);
   console.log(`baselines:    ${published.length ? published.map(c => `${c} ${baselines[c]}`).join(', ') : 'none'}`);
   for (const note of notes) console.log(`note:         ${note}`);
+  for (const warning of warnings) console.log(`WARNING:      ${warning}`);
 
   for (const code of expected) {
     if (!currencyCode(code)) {
