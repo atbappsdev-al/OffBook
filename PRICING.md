@@ -87,9 +87,9 @@ Hence: full price per currency, published here, with a master switch.
     "USD": "6.99",
     "CAD": "6.99",
     "AUD": "9.99",
-    "EUR": "5.99",
-    "NZD": "11.99",
-    "ZAR": "110.00"
+    "EUR": "6.99",
+    "NZD": "12.99",
+    "ZAR": "129.99"
   }
 }
 ```
@@ -187,10 +187,10 @@ The currently published set, which is what the live document holds:
 | United States | `USD` | 6.99 |
 | Canada | `CAD` | 6.99 |
 | Australia | `AUD` | 9.99 |
-| Ireland | `EUR` | 5.99 — shares the entry with Malta and the rest of the eurozone |
+| Ireland | `EUR` | 6.99 — shares the entry with Malta and the rest of the eurozone |
 | Malta | `EUR` | Same entry as Ireland |
-| New Zealand | `NZD` | 11.99 |
-| South Africa | `ZAR` | 110.00 |
+| New Zealand | `NZD` | 12.99 |
+| South Africa | `ZAR` | 129.99 |
 
 Anywhere not in that list sells at whatever the store charges and simply never badges.
 
