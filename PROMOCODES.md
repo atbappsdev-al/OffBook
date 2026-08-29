@@ -54,10 +54,24 @@ works five minutes ago.
 
 | Field | Required | Notes |
 |---|---|---|
-| `word` | yes | The code as printed. Case and internal spaces don't matter — the app trims, uppercases and strips spaces on both sides of the comparison, so `cardiff drama` matches `CARDIFFDRAMA`. |
+| `word` | yes | The code as printed. Case and internal spaces don't matter — the app trims, uppercases and strips spaces on both sides of the comparison, so `cardiff drama` matches `CARDIFFDRAMA`. Also the campaign's name in analytics — see below. |
 | `product_id` | yes | The Play product this code buys. Must be `offbook_pro` or start with `offbook_pro_`; anything else is refused by the app. May be hoisted to the top level as a default for entries that omit it. |
 | `expires` | no | ISO 8601 UTC instant, e.g. `2026-12-30T23:59:59Z`. Omit for a code with no end date. |
 | `active` | no | Defaults to `true`. Set `false` to switch a code off without deleting it. |
+
+## Give each flyer run its own word
+
+Several campaigns share one `product_id` — `offbook_pro_20` is every 20%-off run
+there has ever been — so the product can't tell one flyer from another. The
+**word** is what identifies the campaign, and it's what gets reported to analytics
+when someone starts a redemption (`promo_code_redeem_started`).
+
+So don't reprint `CARDIFFDRAMA` for next year's festival: use `CARDIFFDRAMA27`.
+Reusing a word merges the two runs into one number and you'll never be able to
+separate them again.
+
+Nothing the user types is ever reported — only the word as published here, and
+only once it has matched. A mistyped code reports that it failed and nothing else.
 
 ## Ending a campaign
 
@@ -92,6 +106,7 @@ region" and stops.
 - [ ] The `product_id` exists in Play Console, is **active**, and is available in
       the countries the flyers are going to
 - [ ] `word` matches the printed flyer exactly (spelling, not case)
+- [ ] `word` hasn't been used by a previous campaign
 - [ ] `expires` is after the last day of the run
 - [ ] The file is valid JSON
 - [ ] Tested on a device: type the code, confirm the discounted price appears
