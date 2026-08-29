@@ -1,6 +1,7 @@
-# Flyer promo codes — publishing guide
+# Promo codes — publishing guide
 
-`k9x2mq.json` in this repo is the **live list of flyer promo codes**. Editing it
+`k9x2mq.json` in this repo is the **live list of promo codes** — printed flyers,
+email, partners, cast and crew, wherever you hand a code out. Editing it
 changes which code words work in the Android app. **No app update or store release
 is needed.**
 
@@ -13,7 +14,7 @@ https://atbappsdev-al.github.io/OffBook/k9x2mq.json
 > **This repo is public.** The filename is deliberately not descriptive, which
 > keeps it out of a casual guess at the site's URLs — but it is **not a secret**.
 > Anyone who lists this repo can see it, and the file itself is plain readable
-> JSON. That is fine: the codes are printed on flyers handed to strangers, and
+> JSON. That is fine: codes are handed out to strangers by design, and
 > every one of them still has to survive Play's own check against a live product.
 > Don't put anything in here you wouldn't publish.
 
@@ -57,16 +58,33 @@ works five minutes ago.
 | `word` | yes | The code as printed. Case and internal spaces don't matter — the app trims, uppercases and strips spaces on both sides of the comparison, so `cardiff drama` matches `CARDIFFDRAMA`. Also the campaign's name in analytics — see below. |
 | `product_id` | yes | The Play product this code buys. Must be `offbook_pro` or start with `offbook_pro_`; anything else is refused by the app. May be hoisted to the top level as a default for entries that omit it. |
 | `expires` | no | ISO 8601 UTC instant, e.g. `2026-12-30T23:59:59Z`. Omit for a code with no end date. |
+| `label` | no | Badge text on the paywall while the code is applied, e.g. `20% off` or `Cast & crew`. Keep it under about 20 characters. Omit it and the app says "Offer applied". |
 | `active` | no | Defaults to `true`. Set `false` to switch a code off without deleting it. |
 
-## Give each flyer run its own word
+## The badge
+
+While a code is applied, the paywall replaces its usual price block with the
+discounted price and a small badge. `label` is what that badge says.
+
+Write it to match what the user was told. If the flyer says 20% off, say
+`20% off`. If it's a thank-you for the cast, say `Cast & crew`. Omit `label` and
+it reads "Offer applied", which is true but says nothing.
+
+The app deliberately does **not** work the percentage out from the two prices.
+Store prices are rounded per storefront, so the same discount lands on 20% in one
+currency and 21% in another — the app would contradict your printed material in
+some countries only, and you'd never catch it in testing.
+
+Whatever the badge says, the amount beside it is always the store's own price.
+
+## Give each campaign its own word
 
 Several campaigns share one `product_id` — `offbook_pro_20` is every 20%-off run
-there has ever been — so the product can't tell one flyer from another. The
+there has ever been — so the product can't tell one campaign from another. The
 **word** is what identifies the campaign, and it's what gets reported to analytics
 when someone starts a redemption (`promo_code_redeem_started`).
 
-So don't reprint `CARDIFFDRAMA` for next year's festival: use `CARDIFFDRAMA27`.
+So don't reuse `CARDIFFDRAMA` for next year's festival: use `CARDIFFDRAMA27`.
 Reusing a word merges the two runs into one number and you'll never be able to
 separate them again.
 
@@ -104,9 +122,10 @@ region" and stops.
 ## Pre-publish checklist
 
 - [ ] The `product_id` exists in Play Console, is **active**, and is available in
-      the countries the flyers are going to
-- [ ] `word` matches the printed flyer exactly (spelling, not case)
+      the countries the campaign is running in
+- [ ] `word` matches what you published exactly (spelling, not case)
 - [ ] `word` hasn't been used by a previous campaign
+- [ ] `label` says what the user should see on the paywall badge
 - [ ] `expires` is after the last day of the run
 - [ ] The file is valid JSON
 - [ ] Tested on a device: type the code, confirm the discounted price appears
