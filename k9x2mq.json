@@ -5,5 +5,12 @@
 
   "product_id": "offbook_pro",
 
-  "codes": []
+  "codes": [{
+      "_comment": "Runs for RATS Strangers on a Train",
+      "word": "STRANGERS",
+      "offer_tag": "pro20",
+      "label": "20% off",
+      "expires": "2026-11-30T23:59:59Z",
+      "active": true
+    }]
 }
