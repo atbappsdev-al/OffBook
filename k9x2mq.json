@@ -1,0 +1,9 @@
+{
+  "_comment": "LIVE promo codes — the Android app fetches this file. See PROMOCODES.md. An empty codes array means no code is currently redeemable, which is the correct resting state between campaigns.",
+
+  "schema_version": 1,
+
+  "product_id": "offbook_pro",
+
+  "codes": []
+}
