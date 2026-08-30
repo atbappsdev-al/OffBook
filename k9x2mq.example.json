@@ -1,21 +1,23 @@
 {
-  "_comment": "EXAMPLE ONLY — no app fetches this file. See PROMOCODES.md. Copy the shape of the entries into k9x2mq.json to run a campaign. product_id must be a real, active Play product; the app refuses any id that is not offbook_pro or offbook_pro_<something>, so a typo buys nothing rather than buying the wrong thing. label is the paywall badge and is optional.",
+  "_comment": "EXAMPLE ONLY — no app fetches this file. See PROMOCODES.md. Copy the shape of the entries into k9x2mq.json to run a campaign. product_id names the one product every code buys and must stay offbook_pro; the app discards the whole document if it says anything else. offer_tag must match a tag on a live Discount Offer on that product's Buy purchase option, exactly, including case. label is the paywall badge and is optional.",
 
   "schema_version": 1,
 
+  "product_id": "offbook_pro",
+
   "codes": [
     {
-      "_comment": "A live campaign. 20% off, running until the end of the festival.",
+      "_comment": "A live campaign, running until the end of the festival.",
       "word": "CARDIFFDRAMA",
-      "product_id": "offbook_pro_20",
+      "offer_tag": "cardiffdrama",
       "label": "20% off",
       "expires": "2026-12-30T23:59:59Z",
       "active": true
     },
     {
-      "_comment": "A deeper discount for a different run. Same shape, different product.",
+      "_comment": "A different campaign at a different discount. Same product, different offer tag.",
       "word": "EDFRINGE30",
-      "product_id": "offbook_pro_30",
+      "offer_tag": "edfringe30",
       "label": "30% off",
       "expires": "2026-09-01T23:59:59Z",
       "active": true
@@ -23,7 +25,7 @@
     {
       "_comment": "Switched off by hand before its expiry — active:false is the kill switch. Leave the entry in place as a record of what went out.",
       "word": "LASTYEARSFLYER",
-      "product_id": "offbook_pro_20",
+      "offer_tag": "cardiffdrama",
       "label": "20% off",
       "expires": "2026-12-30T23:59:59Z",
       "active": false
@@ -31,7 +33,7 @@
     {
       "_comment": "Not a flyer at all, and no expiry: this one runs until you set active:false or delete it. Only leave a code open-ended when it is not on printed material. label names the audience rather than the discount.",
       "word": "CASTANDCREW",
-      "product_id": "offbook_pro_30",
+      "offer_tag": "castandcrew",
       "label": "Cast & crew",
       "active": true
     }
