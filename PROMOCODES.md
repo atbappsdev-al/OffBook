@@ -57,11 +57,18 @@ return is reported as expired, not quietly charged at a different rate.
 
 ## How long until a code works
 
-Apps refresh this file passively every six hours, the same cadence as
-`announcements.json`. **But you don't have to wait for that**: when someone
-submits a code the app doesn't recognise, it forces one immediate fetch that
-ignores the six-hour window and checks again. A code published five minutes ago
-works five minutes ago.
+Immediately. **Every code submission fetches this file fresh**, ignoring both the
+app's own six-hour refresh and any HTTP caching. A code published thirty seconds
+ago works thirty seconds ago, and one you switch off stops working just as fast.
+
+The app also refreshes passively every six hours, the same cadence as
+`announcements.json`, but that only keeps a recent copy on disk as a fallback for
+a failed fetch. It is not what a submission reads.
+
+If the fetch fails, the app falls back to that copy — but only to *accept* a code
+it already knows about. A word missing from a stale copy reports "check your
+connection" rather than "we don't recognise that code", because at that point the
+two are indistinguishable.
 
 ## Field reference
 
@@ -106,6 +113,39 @@ Don't reuse a `word` either: `CARDIFFDRAMA` next year should be
 Nothing the user types is ever reported. A mistyped code reports that it failed
 and nothing else.
 
+## Seeing a campaign in analytics
+
+Both platforms report `promo_code_redeemed` when a code turns into a purchase, so
+one campaign is one number however the customer paid. Android adds
+`promo_code_submitted { valid }` and `promo_code_redeem_started { tag }` for the
+funnel above it; iOS has no counterpart to those, because Apple owns the code
+entry and tells the app nothing until a redemption has already succeeded.
+
+| Property | Android | iOS |
+|---|---|---|
+| `tag` | the Play offer tag | the App Store Connect offer reference name |
+| `code` | the word that was redeemed | **not sent** — Apple never reports what was typed |
+
+`code` is what tells two words apart when both point at one offer — a reprint, or
+a second channel. If you need that resolution on iOS, give each campaign its own
+offer, so `tag` carries it.
+
+**They only line up if you name them the same.** The two platforms get the tag by
+completely different routes:
+
+| | Where the tag comes from |
+|---|---|
+| Android | `offer_tag` in this file, matched against the Play offer tag |
+| iOS | the **reference name** of the offer code in App Store Connect, read off the transaction |
+
+So for a campaign running on both, set the App Store Connect offer's reference
+name to the same string as the Play offer tag — `cardiffdrama` in both places.
+Get that wrong and the campaign shows up as two unrelated tags you have to
+reconcile by hand.
+
+Neither platform ever reports what the customer typed. On iOS the app is never
+told; on Android it is deliberately not sent.
+
 ## Ending a campaign
 
 Set `"active": false`, or let `expires` pass. Prefer leaving the entry in place
@@ -134,6 +174,11 @@ whose offer is gone reports "expired or not available in your region" and stops.
   `2026-12-30T23:59:59Z` is late morning on the 31st in New Zealand.
 - **Users who already have Pro never see the code field at all**, so a code can't
   be used to "upgrade" an existing purchase.
+- **Switching a code off takes effect on the next submission**, not six hours
+  later — every submission reads this file live. The one exception is a device
+  that cannot reach GitHub Pages at that moment, which may still honour a code it
+  had already cached. Play is the backstop there: pull the offer in Console and
+  nothing can be charged at the discount whatever the app believes.
 
 ## Pre-publish checklist
 
@@ -141,6 +186,8 @@ whose offer is gone reports "expired or not available in your region" and stops.
       in the countries the campaign is running in
 - [ ] `offer_tag` matches the Console tag exactly, including case
 - [ ] `offer_tag` hasn't been used by a previous campaign
+- [ ] If the campaign also runs on iOS, the App Store Connect offer's reference
+      name is set to the same string as `offer_tag`
 - [ ] `word` matches what you published exactly (spelling, not case)
 - [ ] `word` hasn't been used by a previous campaign
 - [ ] `label` says what the user should see on the paywall badge
