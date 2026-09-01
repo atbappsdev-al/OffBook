@@ -12,5 +12,12 @@
       "label": "20% off",
       "expires": "2026-11-30T23:59:59Z",
       "active": true
-    }]
+    },{
+      "_comment": "For Lodge",
+      "word": "PROSCENIUM",
+      "offer_tag": "pro20",
+      "label": "20% off",
+      "expires": "2027-01-01T00:00:01Z",
+      "active": true
+  }]
 }
