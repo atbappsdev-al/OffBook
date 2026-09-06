@@ -19,5 +19,12 @@
       "label": "20% off",
       "expires": "2027-01-01T00:00:01Z",
       "active": true
+  },{
+      "_comment": "Panto Season",
+      "word": "PANTO26",
+      "offer_tag": "pro20",
+      "label": "20% off",
+      "expires": "2027-01-01T00:00:01Z",
+      "active": true
   }]
 }
