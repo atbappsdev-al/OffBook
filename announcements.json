@@ -1,6 +1,5 @@
 {
   "schema_version": 1,
-
   "id": "2026-08-01-generic-fallback",
   "title": "🎭 **OffBook** has news",
   "message": "There's something new in the app — open the Home screen to take a look.",
@@ -50,6 +49,74 @@
       "max_app_version": 37,
       "title": "🗓️ **Rehearsal Planner** is here",
       "message": "It's included in your Pro purchase at no extra cost. Update OffBook to get it, and thanks for being a Pro member 🎭",
+      "cta_action": "url",
+      "cta_text": "Update on Google Play",
+      "cta_url": "https://play.google.com/store/apps/details?id=com.abdev.offbook",
+      "expires_at": "2026-12-11T00:00:00Z"
+    },
+    {
+      "id": "2026-11-ios-190-planner-trial",
+      "platforms": ["ios"],
+      "audience": "trial",
+      "min_app_version": 15,
+      "title": "🗓️ New: **Rehearsal Planner**",
+      "message": "A daily plan that paces every scene to your opening night. Try it free in your remaining trial sessions, or unlock it for good with Pro.",
+      "cta_action": "paywall",
+      "cta_text": "See Pro",
+      "expires_at": "2026-12-09T00:00:00Z"
+    },
+    {
+      "id": "2026-11-ios-190-planner-free",
+      "platforms": ["ios"],
+      "audience": "free",
+      "min_app_version": 15,
+      "title": "🗓️ New: **Rehearsal Planner**",
+      "message": "A daily plan that paces every scene to your opening night. Unlock it with Pro: a one-off purchase, no subscription.",
+      "cta_action": "paywall",
+      "cta_text": "See Pro",
+      "expires_at": "2026-12-09T00:00:00Z"
+    },
+    {
+      "id": "2026-11-ios-190-planner-free-update",
+      "platforms": ["ios"],
+      "audience": "free",
+      "max_app_version": 14,
+      "title": "🗓️ New: **Rehearsal Planner**",
+      "message": "A daily plan that paces every scene to your opening night. Update OffBook to see it.",
+      "cta_action": "url",
+      "cta_text": "Update on the App Store",
+      "cta_url": "https://apps.apple.com/app/offbook-learn-your-lines/id6789164736",
+      "expires_at": "2026-12-09T00:00:00Z"
+    },
+    {
+      "id": "2026-11-android-1170-planner-trial",
+      "platforms": ["android"],
+      "audience": "trial",
+      "min_app_version": 38,
+      "title": "🗓️ New: **Rehearsal Planner**",
+      "message": "A daily plan that paces every scene to your opening night. Try it free in your remaining trial sessions, or unlock it for good with Pro.",
+      "cta_action": "paywall",
+      "cta_text": "See Pro",
+      "expires_at": "2026-12-11T00:00:00Z"
+    },
+    {
+      "id": "2026-11-android-1170-planner-free",
+      "platforms": ["android"],
+      "audience": "free",
+      "min_app_version": 38,
+      "title": "🗓️ New: **Rehearsal Planner**",
+      "message": "A daily plan that paces every scene to your opening night. Unlock it with Pro: a one-off purchase, no subscription.",
+      "cta_action": "paywall",
+      "cta_text": "See Pro",
+      "expires_at": "2026-12-11T00:00:00Z"
+    },
+    {
+      "id": "2026-11-android-1170-planner-free-update",
+      "platforms": ["android"],
+      "audience": "free",
+      "max_app_version": 37,
+      "title": "🗓️ New: **Rehearsal Planner**",
+      "message": "A daily plan that paces every scene to your opening night. Update OffBook to see it.",
       "cta_action": "url",
       "cta_text": "Update on Google Play",
       "cta_url": "https://play.google.com/store/apps/details?id=com.abdev.offbook",
