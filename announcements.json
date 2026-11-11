@@ -10,6 +10,28 @@
 
   "announcements": [
     {
+      "id": "2026-11-ios-190-planner-pro-updated",
+      "platforms": ["ios"],
+      "audience": "pro",
+      "min_app_version": 15,
+      "title": "🗓️ **Rehearsal Planner** is now included",
+      "message": "It's part of your Pro purchase at no extra cost: open any production and look for the **Today** card to get started. Thanks for being a Pro member 🎭",
+      "cta_action": "dismiss_only",
+      "cta_text": "",
+      "expires_at": "2026-12-09T00:00:00Z"
+    },
+    {
+      "id": "2026-11-android-1170-planner-pro-updated",
+      "platforms": ["android"],
+      "audience": "pro",
+      "min_app_version": 38,
+      "title": "🗓️ **Rehearsal Planner** is now included",
+      "message": "It's part of your Pro purchase at no extra cost: open any production and look for the **Today** card to get started. Thanks for being a Pro member 🎭",
+      "cta_action": "dismiss_only",
+      "cta_text": "",
+      "expires_at": "2026-12-11T00:00:00Z"
+    },
+    {
       "id": "2026-11-ios-190-planner-pro",
       "platforms": ["ios"],
       "audience": "pro",
