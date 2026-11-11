@@ -20,6 +20,18 @@
       "cta_text": "Update on the App Store",
       "cta_url": "https://apps.apple.com/app/offbook-learn-your-lines/id6789164736",
       "expires_at": "2026-12-09T00:00:00Z"
+    },
+    {
+      "id": "2026-11-android-1170-planner-pro",
+      "platforms": ["android"],
+      "audience": "pro",
+      "max_app_version": 37,
+      "title": "🗓️ **Rehearsal Planner** is here",
+      "message": "It's included in your Pro purchase at no extra cost. Update OffBook to get it, and thanks for being a Pro member 🎭",
+      "cta_action": "url",
+      "cta_text": "Update on Google Play",
+      "cta_url": "https://play.google.com/store/apps/details?id=com.abdev.offbook",
+      "expires_at": "2026-12-11T00:00:00Z"
     }
   ]
 }
